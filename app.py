@@ -11,39 +11,40 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- 2. 🎨 CSS ตกแต่ง (White Card Theme - Single Card Layout) ---
+# --- 2. 🎨 CSS ตกแต่ง (Clean & White Theme) ---
 st.markdown("""
 <style>
     /* นำเข้าฟอนต์ Prompt */
     @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap');
     
-    /* บังคับฟอนต์ทั้งหน้า */
+    /* บังคับฟอนต์ */
     html, body, [class*="css"] {
         font-family: 'Prompt', sans-serif;
     }
     
-    /* --- ส่วนที่ลบออกไป: พื้นหลัง Gradient สีส้มแดง --- */
-    /* .stApp, [data-testid="stAppViewContainer"] {
-        background: linear-gradient(135deg, #FF416C 0%, #FF4B2B 100%) !important;
-    } */
+    /* 1. บังคับพื้นหลังหลัก (Main Background) ให้เป็นสีเทาอ่อนแบบ Clean */
+    .stApp, [data-testid="stAppViewContainer"] {
+        background-color: #f0f2f6 !important; /* สีเทาอ่อนสบายตา */
+        background: #f0f2f6 !important;
+        background-image: none !important; /* ลบรูปภาพ/Gradient เดิมทิ้งทั้งหมด */
+    }
 
     /* 2. ปรับแต่ง "กรอบ/การ์ด" (Container) ให้เป็นสีขาวทึบ */
     [data-testid="stVerticalBlockBorderWrapper"] {
         background-color: #FFFFFF !important;
-        background: #FFFFFF !important;
-        border-radius: 24px !important;
-        border: none !important;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1) !important; /* ลดความเข้มเงาลงนิดหน่อยเพื่อให้เข้ากับพื้นหลังขาว */
+        border-radius: 20px !important;
+        border: 1px solid #e0e0e0 !important; /* เพิ่มขอบบางๆ */
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important; /* เงาจางๆ */
         padding: 40px 30px !important;
         margin-bottom: 20px;
     }
     
-    /* ป้องกันสีพื้นหลังซ้อนทับ */
+    /* แก้ไขปัญหาพื้นหลังซ้อนทับ */
     [data-testid="stVerticalBlockBorderWrapper"] > div {
         background-color: transparent !important;
     }
     
-    /* ซ่อน Header/Footer เดิม */
+    /* ซ่อน Header/Footer เดิมของ Streamlit */
     #MainMenu {visibility: hidden;}
     header {visibility: hidden;}
     footer {visibility: hidden;}
@@ -57,16 +58,16 @@ st.markdown("""
     .app-icon {
         width: 100px;
         height: 100px;
-        background: linear-gradient(45deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
+        background: #fff0f0; /* พื้นหลังไอคอนสีชมพูอ่อนมากๆ */
+        color: #ff4b4b;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 50px;
         margin: 0 auto 20px;
-        box-shadow: 0 4px 15px rgba(255, 75, 43, 0.3);
-        animation: pulse 2s infinite;
-        border: none;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        border: 2px solid #ff4b4b;
     }
     
     .subtitle {
@@ -80,76 +81,61 @@ st.markdown("""
     
     h1 {
         color: #333 !important;
-        font-weight: 600 !important;
+        font-weight: 700 !important;
         font-size: 1.8rem !important;
         margin: 0 !important;
-        padding: 0 !important;
-        text-align: center;
     }
     
-    /* 4. คำอธิบาย (Description) */
+    /* 4. คำอธิบาย */
     .description {
-        color: #666;
+        color: #555;
         font-size: 0.95rem;
         line-height: 1.6;
         text-align: center;
         margin-bottom: 30px;
     }
 
-    /* 5. ปุ่มกด (Button) */
+    /* 5. ปุ่มกด (Button) - ปรับเป็นสีส้มแบนๆ ทันสมัย */
     div.stButton > button {
-        background: linear-gradient(90deg, #FF416C 0%, #FF4B2B 100%) !important;
+        background: #ff4b4b !important;
         color: white !important;
         border: none !important;
-        border-radius: 50px !important;
-        padding: 12px 40px !important;
-        font-size: 1.1rem !important;
+        border-radius: 12px !important;
+        padding: 12px 24px !important;
+        font-size: 1rem !important;
         font-weight: 600 !important;
-        box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4) !important;
         width: 100% !important;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
         transition: all 0.3s ease !important;
     }
     div.stButton > button:hover {
-        transform: scale(1.05) !important;
-        box-shadow: 0 6px 20px rgba(255, 65, 108, 0.6) !important;
-        color: white !important;
+        background: #ff3333 !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2) !important;
     }
     
     /* 6. File Uploader */
     [data-testid="stFileUploaderDropzone"] {
-        background-color: #f9f9f9 !important;
-        border: 2px dashed #FF4B2B !important;
-        border-radius: 15px !important;
+        background-color: #fafafa !important;
+        border: 2px dashed #ddd !important;
+        border-radius: 12px !important;
     }
     
     /* 7. Footer */
     .footer-credit {
         font-size: 0.8rem;
-        color: #666; /* เปลี่ยนสี Text footer ให้เข้มขึ้นเพราะพื้นหลังขาว */
+        color: #888; /* เปลี่ยนเป็นสีเทาเข้มเพื่อให้มองเห็นบนพื้นขาว */
         margin-top: 30px;
         padding-top: 15px;
         text-align: center;
-        opacity: 0.8;
     }
     .badge-custom {
-        background-color: rgba(0,0,0,0.1); /* เปลี่ยนสี badge ให้เข้มขึ้น */
-        color: #666;
-        padding: 0.35em 0.65em;
+        background-color: #e0e0e0;
+        color: #555;
+        padding: 0.3em 0.6em;
         font-size: 0.75em;
-        font-weight: 700;
-        border-radius: 0.25rem;
-        display: inline-block;
-        margin-top: 10px;
-    }
-    .footer-dev-name {
-        margin-top: 10px; font-size: 0.75rem; color: #888; /* เพิ่ม class สี่ text */
-    }
-
-    /* Animation Keyframes */
-    @keyframes pulse {
-        0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 75, 43, 0.4); }
-        70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(255, 75, 43, 0); }
-        100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 75, 43, 0); }
+        border-radius: 4px;
+        font-weight: 600;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -189,11 +175,10 @@ def import_and_predict(image_data, model):
 
 model = load_model()
 
-# --- ⭐ สร้างกรอบขาว (Card) เดียวครอบทั้งหมด ⭐ ---
-# สังเกตว่าเราเปิด with st.container() แค่ครั้งเดียวตรงนี้ แล้วเอาทุกอย่างใส่เข้าไป
+# --- สร้างกรอบขาว (Card) ---
 with st.container(border=True):
     
-    # 1. ส่วนหัว (Icon + Titles)
+    # 1. ส่วนหัว
     st.markdown("""
         <div class="card-header-custom">
             <div class="app-icon">🌶️</div>
@@ -203,8 +188,7 @@ with st.container(border=True):
         
         <p class="description">
             ระบบผู้เชี่ยวชาญปัญญาประดิษฐ์สำหรับวินิจฉัยโรคพริกจากใบ <br>
-            ด้วยเทคโนโลยี <strong>Deep Learning (EfficientNetB4)</strong> <br>
-            ความแม่นยำสูง รวดเร็ว และใช้งานง่าย
+            ด้วยเทคโนโลยี <strong>Deep Learning (EfficientNetB4)</strong>
         </p>
     """, unsafe_allow_html=True)
 
@@ -214,16 +198,15 @@ with st.container(border=True):
     if file is None:
         st.markdown("""
             <div style="text-align: center; margin-top: 10px;">
-                <small style="color: #999;">*แนะนำให้เปิดผ่าน Google Chrome หรือ Safari</small>
+                <small style="color: #bbb;">รองรับไฟล์ JPG, PNG, JPEG</small>
             </div>
         """, unsafe_allow_html=True)
 
-    # 3. ส่วนแสดงผล (ย้ายเข้ามาอยู่ใน Indent ของ container แล้ว! ตอนนี้จะอยู่ในกรอบขาวเดียวกัน)
+    # 3. ส่วนแสดงผล
     if file is not None:
         image = Image.open(file)
         
         st.markdown("<br>", unsafe_allow_html=True)
-        # จัดรูปให้อยู่ตรงกลางสวยๆ
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
             st.image(image, use_container_width=True)
@@ -239,23 +222,23 @@ with st.container(border=True):
                     result_class = class_names[class_index]
                     confidence = np.max(predictions) * 100
 
-                # เส้นคั่นภายในการ์ด
+                # เส้นคั่น
                 st.markdown("<hr style='margin: 30px 0; border-top: 1px solid #eee;'>", unsafe_allow_html=True)
                 
                 st.markdown(f"""
                     <div style="text-align: center;">
                         <h3 style="color: #333; margin-bottom: 5px;">ผลการวิเคราะห์</h3>
-                        <h1 style="color: #FF4B2B; font-size: 2.2rem; margin: 0;">{result_class}</h1>
+                        <h1 style="color: #ff4b4b; font-size: 2.2rem; margin: 0;">{result_class}</h1>
                         <p style="color: #777;">ความมั่นใจ: <b>{confidence:.2f}%</b></p>
                     </div>
                 """, unsafe_allow_html=True)
 
-                # --- จัดการ Icon และคำแนะนำตามโรค ---
+                # --- คำแนะนำ ---
                 treatment_text = ""
                 bg_color = "#fff3cd"
                 text_color = "#856404"
                 border_color = "#ffecb5"
-                icon = "⚠️" # ไอคอนเริ่มต้น
+                icon = "⚠️"
                 
                 if result_class == 'healthy':
                     treatment_text = "ต้นพริกแข็งแรงดี! ไม่พบร่องรอยโรค หมั่นดูแลรดน้ำและใส่ปุ๋ยตามปกติ"
@@ -288,13 +271,13 @@ with st.container(border=True):
                     </div>
                 """, unsafe_allow_html=True)
 
-# 4. Footer (Credit) - อยู่นอกการ์ด เพื่อความสวยงาม
+# 4. Footer - อยู่นอกการ์ด
 st.markdown("""
     <div class="footer-credit">
         โครงงานวิจัยทางคอมพิวเตอร์ <br>
         <strong>มหาวิทยาลัยราชภัฏอุบลราชธานี</strong> <br>
-        <span class="badge-custom">v.1.0 (Final Release)</span> <br>
-        <div class="footer-dev-name">
+        <span class="badge-custom">v.1.0 Final</span>
+        <div style="margin-top: 10px; font-size: 0.75rem; color: #aaa;">
             พัฒนาโดย: แมวสีขาวเทา และผองเพื่อน
         </div>
     </div>
