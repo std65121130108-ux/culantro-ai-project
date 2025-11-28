@@ -11,157 +11,164 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- 2. 🎨 CSS ตกแต่ง (Gray Box Theme) ---
+# --- 2. 🎨 CSS ตกแต่ง (Update: รองรับ Tabs และ Camera) ---
 def local_css():
     st.markdown("""
     <style>
         /* นำเข้าฟอนต์ Prompt */
         @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap');
         
-        /* บังคับฟอนต์ทั้งหน้า */
+        /* 1. Global Settings */
         html, body, [class*="css"] {
             font-family: 'Prompt', sans-serif;
         }
-        
-        /* 1. พื้นหลังหลัก (Background) - เปลี่ยนเป็นสีเข้มเพื่อให้กล่องเทาเด่นขึ้น */
-        .stApp, [data-testid="stAppViewContainer"] {
-            background-color: #222222 !important; /* พื้นหลังเว็บสีดำเทา */
-            background-image: none !important;
+
+        /* 2. พื้นหลัง Gradient */
+        .stApp {
+            background: linear-gradient(135deg, #FF416C 0%, #FF4B2B 100%) !important;
+            background-attachment: fixed !important;
+            background-size: cover !important;
         }
 
-        /* 2. ปรับแต่ง "กรอบ/การ์ด" (เปลี่ยนจาก Glass เป็น Gray Box ตามที่ขอ) */
-        [data-testid="stVerticalBlockBorderWrapper"] {
-            background-color: #e0e0e0 !important;       /* พื้นหลังสีเทา */
-            border: 2px solid #333333 !important;       /* ขอบสีเข้มและหนาขึ้น */
-            box-shadow: 4px 4px 10px rgba(0,0,0,0.5) !important; /* ใส่เงาชัดๆ */
-            border-radius: 10px !important;             /* มุมมน */
-            
-            padding: 40px 30px !important;
-            margin-bottom: 20px;
-            
-            /* Animation ตอนเปิดเว็บ */
-            animation: fadeUp 0.8s ease-out;
+        /* 3. Block Container (การ์ดขาวใบใหญ่) */
+        div.block-container {
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            border-radius: 25px !important;
+            padding: 3rem 2rem !important;
+            margin-top: 2rem !important;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3) !important;
+            max-width: 700px !important;
+        }
+
+        /* ตัวอักษรสีเข้ม */
+        div.block-container h1, div.block-container h2, div.block-container h3, 
+        div.block-container p, div.block-container span, div.block-container div, 
+        div.block-container label, div.block-container small {
+             color: #333333 !important;
         }
         
-        /* ป้องกันสีพื้นหลังซ้อนทับ */
-        [data-testid="stVerticalBlockBorderWrapper"] > div {
-            background-color: transparent !important;
-        }
-        
+        /* ยกเว้น Text ในปุ่มกด */
+        div.stButton > button p { color: white !important; }
+
         /* ซ่อน Header/Footer เดิม */
         #MainMenu {visibility: hidden;}
         header {visibility: hidden;}
         footer {visibility: hidden;}
 
-        /* 3. ส่วนหัว (Icon & Titles) */
-        .card-header-custom {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        
+        /* 4. Custom Elements */
         .app-icon {
             width: 100px;
             height: 100px;
-            background-color: #ffffff; /* พื้นหลังไอคอนสีขาว */
-            border: 2px solid #333;    /* ขอบไอคอนสีดำ */
+            background: linear-gradient(45deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%) !important;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 50px;
             margin: 0 auto 20px;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+            box-shadow: 0 6px 20px rgba(255, 75, 43, 0.4) !important;
             cursor: default;
         }
         
         .subtitle {
-            color: #d32f2f;
-            font-weight: 700;
-            font-size: 0.9rem;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            margin-bottom: 5px;
+            color: #d32f2f !important;
+            font-weight: 600 !important;
+            font-size: 0.9rem !important;
+            letter-spacing: 2px !important;
+            text-transform: uppercase !important;
+            text-align: center !important;
+            margin-bottom: 5px !important;
         }
         
         h1 {
-            color: #000000 !important; /* หัวข้อสีดำสนิท */
             font-weight: 800 !important;
-            font-size: 2rem !important;
+            font-size: 2.2rem !important;
             margin: 0 !important;
             padding: 0 !important;
-            text-align: center;
-            text-transform: uppercase;
-        }
-        
-        /* 4. คำอธิบาย (Description) */
-        .description {
-            color: #333333; /* ตัวหนังสือคำอธิบายสีเข้ม */
-            font-weight: 500;
-            font-size: 0.95rem;
-            line-height: 1.6;
-            text-align: center;
-            margin-bottom: 30px;
+            text-align: center !important;
         }
 
-        /* 5. ปุ่มกด (Button) - ปรับสไตล์ให้เข้ากับธีม */
+        .description {
+            font-size: 1rem !important;
+            line-height: 1.6 !important;
+            text-align: center !important;
+            margin: 20px 0 30px 0 !important;
+        }
+
+        /* 5. ปุ่มกด */
         div.stButton > button {
-            background-color: #333333 !important; /* ปุ่มสีดำ */
-            background-image: none !important;
+            background: linear-gradient(90deg, #FF416C 0%, #FF4B2B 100%) !important;
+            border: none !important;
             color: white !important;
-            border: 2px solid #000 !important;
+            padding: 15px 40px !important;
             border-radius: 50px !important;
-            padding: 12px 40px !important;
             font-size: 1.1rem !important;
             font-weight: 600 !important;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3) !important;
+            box-shadow: 0 5px 15px rgba(255, 65, 108, 0.4) !important;
             width: 100% !important;
-            transition: all 0.2s ease !important;
+            transition: all 0.3s ease !important;
         }
         div.stButton > button:hover {
             transform: scale(1.02) !important;
-            background-color: #555555 !important; /* ชี้แล้วเปลี่ยนสี */
-            color: white !important;
-        }
-        
-        /* 6. File Uploader */
-        [data-testid="stFileUploaderDropzone"] {
-            background-color: #ffffff !important; /* พื้นที่อัปโหลดสีขาว */
-            border: 2px dashed #333333 !important; /* เส้นปะสีดำ */
-            border-radius: 15px !important;
-            color: #333 !important;
-        }
-        [data-testid="stFileUploaderDropzone"] div {
-            color: #333 !important;
-        }
-        
-        /* 7. Footer */
-        .footer-credit {
-            font-size: 0.8rem;
-            color: #555;
-            margin-top: 30px;
-            padding-top: 15px;
-            text-align: center;
-            border-top: 2px solid #ccc;
-            font-weight: 500;
-        }
-        .badge-custom {
-            background-color: #333;
-            color: #fff;
-            padding: 0.35em 0.65em;
-            font-size: 0.75em;
-            font-weight: 700;
-            border-radius: 0.25rem;
-            display: inline-block;
-            margin-top: 10px;
+            box-shadow: 0 8px 25px rgba(255, 65, 108, 0.5) !important;
         }
 
-        /* Animation Keyframes */
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(40px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* 6. File Uploader */
+        [data-testid="stFileUploaderDropzone"] {
+            background-color: rgba(240, 240, 240, 0.5) !important;
+            border: 2px dashed #FF4B2B !important;
+            border-radius: 15px !important;
+            padding: 20px !important;
+        }
+        [data-testid="stFileUploaderDropzone"] button {
+             border: none !important;
+             background: #FF4B2B !important;
+             color: white !important;
+        }
+
+        /* 7. Tabs Styling (ตกแต่งแท็บ) */
+        .stTabs [data-baseweb="tab-list"] {
+            gap: 10px;
+            background-color: transparent;
+            margin-bottom: 20px;
+        }
+        .stTabs [data-baseweb="tab"] {
+            height: 45px;
+            background-color: #f0f0f0;
+            border-radius: 20px;
+            padding: 0px 20px;
+            color: #666;
+            font-weight: 600;
+            border: none;
+        }
+        .stTabs [aria-selected="true"] {
+            background-color: #ffe5e5 !important;
+            color: #FF4B2B !important;
+            border: 1px solid #FF4B2B !important;
+        }
+
+        /* 8. Footer */
+        .footer-credit {
+            font-size: 0.8rem !important;
+            color: #888 !important;
+            margin-top: 30px !important;
+            padding-top: 20px !important;
+            text-align: center !important;
+            border-top: 1px solid rgba(0,0,0,0.1) !important;
+        }
+        .badge-custom {
+            background-color: #f0f0f0 !important;
+            color: #333 !important;
+            padding: 0.35em 0.8em !important;
+            font-size: 0.75em !important;
+            font-weight: 700 !important;
+            border-radius: 20px !important;
+            display: inline-block !important;
+            margin-top: 10px !important;
         }
     </style>
     """, unsafe_allow_html=True)
+
 local_css()
 
 # --- 3. โหลดโมเดล ---
@@ -199,113 +206,119 @@ def import_and_predict(image_data, model):
 
 model = load_model()
 
-# --- ⭐ สร้างกรอบสไตล์ Gray Box (ตามคำขอ) ⭐ ---
-with st.container(border=True):
-    
-    # 1. ส่วนหัว (Icon + Titles)
-    st.markdown("""
-        <div class="card-header-custom">
-            <div class="app-icon">🌶️</div>
-            <div class="subtitle">AI Expert System</div>
-            <h1>Chili Doctor AI</h1>
-        </div>
-        
+# 1. ส่วนหัว
+st.markdown("""
+    <div style="text-align: center;">
+        <div class="app-icon">🌶️</div>
+        <div class="subtitle">AI Expert System</div>
+        <h1>Chili Doctor AI</h1>
         <p class="description">
             ระบบผู้เชี่ยวชาญปัญญาประดิษฐ์สำหรับวินิจฉัยโรคพริกจากใบ <br>
             ด้วยเทคโนโลยี <strong>Deep Learning (EfficientNetB4)</strong> <br>
             ความแม่นยำสูง รวดเร็ว และใช้งานง่าย
         </p>
-    """, unsafe_allow_html=True)
+    </div>
+""", unsafe_allow_html=True)
 
-    # 2. ส่วนอัปโหลด
-    file = st.file_uploader("", type=["jpg", "png", "jpeg"])
+# 2. ส่วนรับข้อมูล (Tabs: ถ่ายภาพ / อัปโหลด)
+tab_cam, tab_up = st.tabs(["📸 ถ่ายภาพใบพริก", "📂 อัปโหลดไฟล์รูป"])
+
+img_file_buffer = None
+
+with tab_cam:
+    st.markdown("<div style='text-align: center; color: #666; margin-bottom: 10px;'>กดปุ่มด้านล่างเพื่อถ่ายรูป</div>", unsafe_allow_html=True)
+    camera_image = st.camera_input("กล้องถ่ายรูป", label_visibility="hidden")
+    if camera_image is not None:
+        img_file_buffer = camera_image
+
+with tab_up:
+    uploaded_file = st.file_uploader("เลือกรูปภาพจากเครื่อง", type=["jpg", "png", "jpeg"])
+    if uploaded_file is not None:
+        img_file_buffer = uploaded_file
+
+# 3. ส่วนแสดงผลและทำนาย
+if img_file_buffer is not None:
+    image = Image.open(img_file_buffer)
     
-    if file is None:
-        st.markdown("""
-            <div style="text-align: center; margin-top: 10px;">
-                <small style="color: #555; font-weight: bold;">*แนะนำให้เปิดผ่าน Google Chrome หรือ Safari</small>
-            </div>
-        """, unsafe_allow_html=True)
-
-    # 3. ส่วนแสดงผล
-    if file is not None:
-        image = Image.open(file)
+    st.markdown("<br>", unsafe_allow_html=True)
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.markdown('<div style="border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border: 3px solid rgba(255,255,255,0.8);">', unsafe_allow_html=True)
+        st.image(image, use_container_width=True)
+        st.markdown('</div>', unsafe_allow_html=True)
         
-        st.markdown("<br>", unsafe_allow_html=True)
-        # จัดรูปให้อยู่ตรงกลางสวยๆ
-        col1, col2, col3 = st.columns([1, 2, 1])
-        with col2:
-            st.image(image, use_container_width=True)
+    if st.button("🚀 วินิจฉัยโรคทันที"):
+        if model is None:
+            st.error("❌ ไม่สามารถโหลดโมเดลได้")
+        else:
+            with st.spinner('AI กำลังประมวลผล...'):
+                predictions = import_and_predict(image, model)
+                class_names = ['healthy', 'leaf curl', 'leaf spot', 'whitefly', 'yellow']
+                class_index = np.argmax(predictions)
+                result_class = class_names[class_index]
+                confidence = np.max(predictions) * 100
+
+            # เส้นคั่น
+            st.markdown("<div style='height: 1px; background-color: rgba(0,0,0,0.1); margin: 30px 0;'></div>", unsafe_allow_html=True)
             
-        if st.button("🚀 เริ่มต้นวิเคราะห์โรค"):
-            if model is None:
-                st.error("❌ ไม่สามารถโหลดโมเดลได้")
-            else:
-                with st.spinner('AI กำลังประมวลผล...'):
-                    predictions = import_and_predict(image, model)
-                    class_names = ['healthy', 'leaf curl', 'leaf spot', 'whitefly', 'yellow']
-                    class_index = np.argmax(predictions)
-                    result_class = class_names[class_index]
-                    confidence = np.max(predictions) * 100
-
-                # เส้นคั่นภายในการ์ด
-                st.markdown("<hr style='margin: 30px 0; border-top: 2px solid #bbb;'>", unsafe_allow_html=True)
-                
-                st.markdown(f"""
-                    <div style="text-align: center;">
-                        <h3 style="color: #333; margin-bottom: 5px;">ผลการวิเคราะห์</h3>
-                        <h1 style="color: #d32f2f; font-size: 2.5rem; margin: 0; text-shadow: 1px 1px 0px white;">{result_class}</h1>
-                        <p style="color: #333; font-weight: bold;">ความมั่นใจ: <b>{confidence:.2f}%</b></p>
+            # ผลลัพธ์
+            st.markdown(f"""
+                <div style="text-align: center;">
+                    <h3 style="color: #666; font-size: 1rem; margin-bottom: 5px;">ผลการวิเคราะห์</h3>
+                    <h1 style="color: #FF4B2B !important; font-size: 2.5rem; margin: 0;">{result_class.upper()}</h1>
+                    <div style="background: #fff0f0; color: #FF4B2B; display: inline-block; padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; margin-top: 10px;">
+                        ความมั่นใจ: {confidence:.2f}%
                     </div>
-                """, unsafe_allow_html=True)
+                </div>
+            """, unsafe_allow_html=True)
 
-                # --- จัดการ Icon และคำแนะนำตามโรค ---
-                treatment_text = ""
-                bg_color = "#fff3cd"
-                text_color = "#856404"
-                border_color = "#ffecb5"
-                icon = "⚠️" # ไอคอนเริ่มต้น
-                
-                if result_class == 'healthy':
-                    treatment_text = "ต้นพริกแข็งแรงดี! ไม่พบร่องรอยโรค หมั่นดูแลรดน้ำและใส่ปุ๋ยตามปกติ"
-                    bg_color = "#d4edda"
-                    text_color = "#155724"
-                    border_color = "#c3e6cb"
-                    icon = "🌿"
-                elif result_class == 'leaf curl':
-                    treatment_text = "โรคใบหงิกมักเกิดจากแมลงหวี่ขาว ให้กำจัดวัชพืชและใช้สารสกัดสะเดา หรือเชื้อราเมตาไรเซียมฉีดพ่น"
-                    icon = "🌀"
-                elif result_class == 'leaf spot':
-                    treatment_text = "โรคใบจุดตากบ เกิดจากเชื้อรา ให้ตัดแต่งใบที่เป็นโรคเผาทำลาย และฉีดพ่นสารป้องกันเชื้อรา"
-                    icon = "🍂"
-                elif result_class == 'whitefly':
-                      treatment_text = "พบแมลงหวี่ขาว ให้ใช้กับดักกาวเหนียวสีเหลือง หรือฉีดพ่นน้ำหมักสมุนไพร"
-                      icon = "🪰"
-                elif result_class == 'yellow':
-                      treatment_text = "อาการใบเหลือง อาจเกิดจากการขาดสารอาหาร หรือไวรัส ควรตรวจสอบดินและใส่ปุ๋ยบำรุง"
-                      icon = "🟡"
-                
-                # กล่องผลลัพธ์ (ให้ขอบเข้มขึ้นตามธีม)
-                st.markdown(f"""
-                    <div style="background-color: {bg_color}; color: {text_color}; border: 2px solid {text_color}; padding: 20px; border-radius: 12px; margin-top: 15px; font-size: 0.95rem; box-shadow: 2px 2px 5px rgba(0,0,0,0.1);">
-                        <div style="display: flex; align-items: start;">
-                            <div style="font-size: 1.8rem; margin-right: 15px;">{icon}</div>
-                            <div>
-                                <strong style="display: block; margin-bottom: 5px;">คำแนะนำ:</strong>
-                                {treatment_text}
-                            </div>
+            # Icon & Treatment Logic
+            treatment_text = ""
+            bg_color = "rgba(255, 248, 225, 0.8)"
+            icon_bg = "#ffecb3"
+            icon = "⚠️"
+            
+            if result_class == 'healthy':
+                treatment_text = "ต้นพริกแข็งแรงดี! ไม่พบร่องรอยโรค หมั่นดูแลรดน้ำและใส่ปุ๋ยตามปกติ"
+                bg_color = "rgba(232, 245, 233, 0.8)"
+                icon_bg = "#c8e6c9"
+                icon = "🌿"
+            elif result_class == 'leaf curl':
+                treatment_text = "โรคใบหงิกมักเกิดจากแมลงหวี่ขาว ให้กำจัดวัชพืชและใช้สารสกัดสะเดา หรือเชื้อราเมตาไรเซียมฉีดพ่น"
+                icon = "🌀"
+            elif result_class == 'leaf spot':
+                treatment_text = "โรคใบจุดตากบ เกิดจากเชื้อรา ให้ตัดแต่งใบที่เป็นโรคเผาทำลาย และฉีดพ่นสารป้องกันเชื้อรา"
+                icon = "🍂"
+            elif result_class == 'whitefly':
+                  treatment_text = "พบแมลงหวี่ขาว ให้ใช้กับดักกาวเหนียวสีเหลือง หรือฉีดพ่นน้ำหมักสมุนไพร"
+                  icon = "🪰"
+            elif result_class == 'yellow':
+                  treatment_text = "อาการใบเหลือง อาจเกิดจากการขาดสารอาหาร หรือไวรัส ควรตรวจสอบดินและใส่ปุ๋ยบำรุง"
+                  icon = "🟡"
+            
+            # กล่องคำแนะนำ
+            st.markdown(f"""
+                <div style="background-color: {bg_color}; padding: 25px; border-radius: 15px; margin-top: 25px; text-align: left; border: 1px solid rgba(0,0,0,0.05);">
+                    <div style="display: flex; align-items: start;">
+                        <div style="background: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-right: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); flex-shrink: 0;">
+                            {icon}
+                        </div>
+                        <div>
+                            <strong style="display: block; margin-bottom: 5px; color: #333; font-size: 1rem;">คำแนะนำการดูแลรักษา</strong>
+                            <span style="color: #555; line-height: 1.5; font-size: 0.9rem;">{treatment_text}</span>
                         </div>
                     </div>
-                """, unsafe_allow_html=True)
+                </div>
+            """, unsafe_allow_html=True)
 
-    # 4. Footer (Credit)
-    st.markdown("""
-        <div class="footer-credit">
-            โครงงานวิจัยทางคอมพิวเตอร์ <br>
-            <strong>มหาวิทยาลัยราชภัฏอุบลราชธานี</strong> <br>
-            <span class="badge-custom">v.1.0 (Final Release)</span> <br>
-            <div style="margin-top: 10px; font-size: 0.75rem; color: #555;">
-                พัฒนาโดย: แมวสีขาวเทา และผองเพื่อน
-            </div>
+# 4. Footer
+st.markdown("""
+    <div class="footer-credit">
+        โครงงานวิจัยทางคอมพิวเตอร์ <br>
+        <strong>มหาวิทยาลัยราชภัฏอุบลราชธานี</strong> <br>
+        <span class="badge-custom">v.1.0 (Final Release)</span> <br>
+        <div style="margin-top: 10px; font-size: 0.75rem; color: #aaa;">
+            พัฒนาโดย: แมวสีขาวเทา และผองเพื่อน
         </div>
-    """, unsafe_allow_html=True)
+    </div>
+""", unsafe_allow_html=True)
