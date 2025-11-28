@@ -229,9 +229,13 @@ def import_and_predict(image_data, model):
 
 model = load_model()
 
-# ⭐ 1. สร้างตัวแปรนับจำนวนครั้งการรีเซ็ต (เอาไว้เปลี่ยนชื่อ Key ของกล้อง) ⭐
+# ⭐ 1. ตัวแปรสำหรับเปลี่ยน Key กล้อง (เพื่อรีเซ็ต)
 if 'reset_count' not in st.session_state:
     st.session_state['reset_count'] = 0
+
+# ⭐ 2. ตัวแปรสำหรับเก็บภาพถ่าย (เพื่อซ่อนกล้อง)
+if 'cam_img_buffer' not in st.session_state:
+    st.session_state['cam_img_buffer'] = None
 
 # ส่วนหัว
 st.markdown("""
@@ -247,44 +251,55 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# 2. ส่วนรับข้อมูล (Tabs)
+# Tabs
 tab_cam, tab_up = st.tabs(["📸 ถ่ายภาพใบพริก", "📂 อัปโหลดไฟล์รูป"])
 
 img_file_buffer = None
-
-# สร้าง Dynamic Key โดยอิงจาก reset_count
-# เช่น camera_0, camera_1, camera_2 ... พอชื่อเปลี่ยน กล้องจะรีเซ็ตตัวเอง
 camera_key = f"camera_{st.session_state['reset_count']}"
 uploader_key = f"uploader_{st.session_state['reset_count']}"
 
+# --- ส่วนกล้อง (แก้ไข Logic: ถ่ายแล้วซ่อน) ---
 with tab_cam:
-    # 1. Widget กล้อง
-    camera_image = st.camera_input("กล้องถ่ายรูป", label_visibility="hidden", key=camera_key)
-    
-    if camera_image is not None:
-        img_file_buffer = camera_image
-    
-    # 2. ข้อความแจ้งเตือน (ไม้ตาย: บังคับสีขาวที่กล่อง + ปรับขนาดให้พอดีคำ)
-    st.markdown("""
-        <div style="text-align: center; margin-top: 20px;">
-            <div style="
-                display: inline-block; /* ⭐ ทำให้กล่องหดเหลือเท่าตัวอักษร ⭐ */
-                background: linear-gradient(90deg, #FF416C 0%, #FF4B2B 100%);
-                color: white !important; /* ⭐ บังคับสีขาวที่ตัวกล่องโดยตรง ⭐ */
-                padding: 15px 30px; /* เพิ่ม padding แนวนอนให้ดูสวยขึ้น */
-                border-radius: 50px;
-                box-shadow: 0 5px 15px rgba(255, 65, 108, 0.4);
-                font-weight: 600;
-                font-size: 1.1rem;
-                cursor: default;
-            ">
-                📸 กดปุ่ม "Take Photo" ด้านบนเพื่อถ่ายรูป
+    # ถ้ายังไม่มีภาพในความจำ -> แสดงกล้อง
+    if st.session_state['cam_img_buffer'] is None:
+        camera_image = st.camera_input("กล้องถ่ายรูป", label_visibility="hidden", key=camera_key)
+        
+        # ข้อความแจ้งเตือน (แสดงเฉพาะตอนเปิดกล้อง)
+        st.markdown("""
+            <div style="text-align: center; margin-top: 20px;">
+                <div style="
+                    display: inline-block;
+                    background: linear-gradient(90deg, #FF416C 0%, #FF4B2B 100%);
+                    padding: 15px 30px;
+                    border-radius: 50px;
+                    box-shadow: 0 5px 15px rgba(255, 65, 108, 0.4);
+                ">
+                    <h4 style="
+                        color: #ffffff !important; 
+                        margin: 0 !important; 
+                        padding: 0 !important;
+                        font-weight: 600; 
+                        font-size: 1.1rem;
+                        -webkit-text-fill-color: #ffffff !important;
+                    ">
+                        📸 กดปุ่ม "Take Photo" ด้านบนเพื่อถ่ายรูป
+                    </h4>
+                </div>
             </div>
-        </div>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
 
+        if camera_image is not None:
+            # ถ้ากดถ่ายปุ๊บ -> จำภาพไว้ -> สั่งโหลดหน้าใหม่เพื่อซ่อนกล้อง
+            st.session_state['cam_img_buffer'] = camera_image
+            st.rerun()
+            
+    else:
+        # ถ้ามีภาพแล้ว -> ไม่ต้องโชว์กล้อง -> ส่งค่าภาพไปให้ตัวแปรหลัก
+        img_file_buffer = st.session_state['cam_img_buffer']
+        st.success("✅ บันทึกภาพเรียบร้อยแล้ว (กดปุ่ม 'ถ่ายรูปใหม่อีกครั้ง' หากต้องการถ่ายรูปภาพใหม่)")
+
+# --- ส่วนอัปโหลด ---
 with tab_up:
-    # ใช้ dynamic key เช่นกัน
     uploaded_file = st.file_uploader("เลือกรูปภาพจากเครื่อง", type=["jpg", "png", "jpeg"], key=uploader_key)
     if uploaded_file is not None:
         img_file_buffer = uploaded_file
@@ -312,10 +327,10 @@ if img_file_buffer is not None:
     with b2:
         reset_click = st.button("🔄 ถ่ายรูปใหม่อีกครั้ง", use_container_width=True)
 
-    # --- ⭐ แก้ไข Logic: แค่เพิ่มตัวเลข reset_count ก็พอ ⭐ ---
+    # --- ⭐ แก้ไข Logic Reset: ต้องลบภาพในความจำด้วย ⭐ ---
     if reset_click:
-        # พอตัวเลขเพิ่ม -> key เปลี่ยน -> widget ถูกสร้างใหม่ -> รูปหาย
         st.session_state['reset_count'] += 1
+        st.session_state['cam_img_buffer'] = None # ล้างภาพที่จำไว้
         st.rerun()
 
     if predict_click:
@@ -382,11 +397,11 @@ if img_file_buffer is not None:
 # 4. Footer
 st.markdown("""
     <div class="footer-credit">
-        โครงงานวิจัยทางคอมพิวเตอร์ <br>
-        <strong>มหาวิทยาลัยราชภัฏอุบลราชธานี</strong> <br>
-        <span class="badge-custom">v.1.0 (Final Release)</span> <br>
+        <strong>วิจัยทางคอมพิวเตอร์  โดยสาขาวิชาคอมพิวเตอร์ศึกษา</strong> <br>
+        <strong>คณะครุศาสตร์  มหาวิทยาลัยราชภัฏอุบลราชธานี</strong> <br>
+        <span class="badge-custom">V.1.0 (Final Release)</span> <br>
         <div style="margin-top: 10px; font-size: 0.75rem; color: #aaa;">
-            พัฒนาโดย: แมวสีขาวเทา และผองเพื่อน
+            <strong>พัฒนาโดย: แมวใส่ชุดกบ และผองเพื่อน</strong>
         </div>
     </div>
 """, unsafe_allow_html=True)
