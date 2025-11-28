@@ -11,50 +11,72 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- 2. 🎨 CSS ตกแต่ง (แก้ไขให้การ์ดเป็นสีขาวแน่นอน) ---
+# --- 2. 🎨 CSS ตกแต่ง (ฉบับแก้ไข: การ์ดสีขาว + ตัวหนังสือชัด) ---
 st.markdown("""
-<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
     /* บังคับฟอนต์ Prompt */
     html, body, [class*="css"], [class*="st-"] {
         font-family: 'Prompt', sans-serif !important;
     }
     
-    /* 1. พื้นหลังหลัก (Background) */
+    /* 1. พื้นหลังหลัก (Gradient สีส้มแดง) */
     .stApp {
         background: linear-gradient(135deg, #FF416C 0%, #FF4B2B 100%) !important;
         background-attachment: fixed !important;
     }
 
-    /* 2. บังคับการ์ดให้เป็นสีขาว (แก้ปัญหาพื้นหลังใส) */
+    /* 2. บังคับการ์ดให้เป็นสีขาวขุ่นและมีเงาชัดเจน */
     div[data-testid="stVerticalBlockBorderWrapper"] {
         background-color: rgba(255, 255, 255, 0.95) !important; /* สีขาว 95% */
-        backdrop-filter: blur(10px);
+        backdrop-filter: blur(12px) !important;
         border-radius: 24px !important;
-        border: 1px solid rgba(255, 255, 255, 0.4) !important;
-        padding: 40px 20px !important;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
-        
-        /* จัดกึ่งกลาง */
+        border: 1px solid rgba(255, 255, 255, 0.8) !important;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2) !important;
+        padding: 30px !important;
         max-width: 500px;
         margin: auto;
     }
 
-    /* 3. ปรับสีข้อความภายในการ์ดให้ชัดเจน */
-    div[data-testid="stVerticalBlockBorderWrapper"] * {
-        color: #333333 !important; /* บังคับตัวหนังสือสีเข้ม */
-    }
-    
-    div[data-testid="stVerticalBlockBorderWrapper"] h1 {
-        color: #FF4B2B !important; /* หัวข้อสีส้มแดง */
+    /* 3. บังคับตัวหนังสือข้างในกรอบให้เป็นสีเข้ม (แก้ปัญหาตัวหนังสือขาวกลืนพื้นหลัง) */
+    div[data-testid="stVerticalBlockBorderWrapper"] h1,
+    div[data-testid="stVerticalBlockBorderWrapper"] h2,
+    div[data-testid="stVerticalBlockBorderWrapper"] h3,
+    div[data-testid="stVerticalBlockBorderWrapper"] p,
+    div[data-testid="stVerticalBlockBorderWrapper"] div,
+    div[data-testid="stVerticalBlockBorderWrapper"] span,
+    div[data-testid="stVerticalBlockBorderWrapper"] label,
+    div[data-testid="stVerticalBlockBorderWrapper"] small {
+        color: #333333 !important;
     }
 
-    /* 4. ปรับช่อง Upload ให้สวยงาม */
+    /* หัวข้อใหญ่สีแดง */
+    div[data-testid="stVerticalBlockBorderWrapper"] h1 {
+        color: #FF4B2B !important;
+        text-shadow: none !important;
+        font-size: 2rem !important;
+        margin-bottom: 5px !important;
+    }
+    
+    /* Subtitle */
+    .subtitle {
+        color: #666 !important;
+        font-size: 1rem !important;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    /* 4. ปรับช่อง Upload ให้พื้นหลังเทาอ่อน ตัดกับสีขาว */
     [data-testid="stFileUploaderDropzone"] {
-        background-color: #f9f9f9 !important;
+        background-color: #f1f3f4 !important;
         border: 2px dashed #FF4B2B !important;
-        border-radius: 15px !important;
+        border-radius: 16px !important;
         padding: 20px !important;
+    }
+    [data-testid="stFileUploaderDropzone"] div div::before {
+        color: #555 !important;
+        content: "Drag and drop file here";
+        font-weight: 600;
     }
     [data-testid="stFileUploaderDropzone"] small {
         color: #888 !important;
@@ -66,16 +88,30 @@ st.markdown("""
         color: white !important;
         border: none !important;
         border-radius: 50px !important;
-        box-shadow: 0 4px 15px rgba(255, 65, 108, 0.3) !important;
+        box-shadow: 0 5px 15px rgba(255, 65, 108, 0.4) !important;
+        font-weight: 600 !important;
         transition: transform 0.2s;
+        margin-top: 10px;
     }
     div.stButton > button:hover {
         transform: scale(1.03);
     }
+    /* บังคับตัวหนังสือในปุ่มเป็นสีขาวเสมอ */
+    div.stButton > button p {
+        color: white !important;
+    }
+
+    /* Footer */
+    .footer {
+        text-align: center;
+        margin-top: 30px;
+        color: rgba(255,255,255,0.8);
+        font-size: 0.8rem;
+    }
     
-    /* ซ่อน Header/Footer ของ Streamlit */
+    /* ซ่อน Header/Footer เดิม */
     #MainMenu, header, footer {visibility: hidden;}
-    
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -83,10 +119,9 @@ st.markdown("""
 @st.cache_resource
 def load_model():
     filename = 'efficientnetb4_model.h5'
-    # จำลองการโหลด (เปลี่ยนส่วนนี้เป็นโค้ดดาวน์โหลดจริงของคุณถ้าจำเป็น)
     # หากไม่มีไฟล์ ให้ข้ามไปก่อนเพื่อป้องกัน Error หน้าเว็บ
     if not os.path.exists(filename):
-        # ใส่โค้ด gdown ของคุณที่นี่
+        # ใส่โค้ด gdown ของคุณที่นี่ถ้าจำเป็น
         pass 
         
     try:
@@ -104,18 +139,21 @@ def import_and_predict(image_data, model):
 
 # --- 4. ส่วนแสดงผล (UI) ---
 
-# โหลดโมเดล
 model = load_model()
 
-# สร้าง Container ที่จะกลายเป็น Glass Card ตาม CSS
+# ใช้ Container แบบมีขอบ (CSS จะทำงานที่ตัวนี้)
 with st.container(border=True):
     
-    # Header ส่วนบน
+    # Header
     st.markdown("""
-        <div class="emoji-icon">🌶️</div>
-        <h1>Chili Doctor AI</h1>
-        <div class="subtitle">ระบบผู้เชี่ยวชาญตรวจวินิจฉัยโรคพริกอัจฉริยะ</div>
-        <div style="text-align: center;"><span class="tech-tag">Deep Learning Technology (EfficientNetB4)</span></div>
+        <div style="text-align: center;">
+            <div style="font-size: 4rem; margin-bottom: 5px;">🌶️</div>
+            <h1>Chili Doctor AI</h1>
+            <div class="subtitle">ระบบผู้เชี่ยวชาญตรวจวินิจฉัยโรคพริกอัจฉริยะ</div>
+            <span style="background: #ffebee; color: #c62828 !important; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; display: inline-block; margin-bottom: 20px;">
+                Deep Learning Technology (EfficientNetB4)
+            </span>
+        </div>
     """, unsafe_allow_html=True)
 
     # พื้นที่อัปโหลด
@@ -124,16 +162,16 @@ with st.container(border=True):
     if file is not None:
         image = Image.open(file)
         
-        # แสดงรูปภาพ (ปรับให้สวยงาม)
+        # แสดงรูปภาพ
         st.markdown("<br>", unsafe_allow_html=True)
         col1, col2, col3 = st.columns([1, 4, 1])
         with col2:
             st.image(image, use_container_width=True)
         
-        # แสดงรายละเอียดไฟล์แบบย่อ
+        # รายละเอียดไฟล์
         size_kb = file.size / 1024
         st.markdown(f"""
-            <div style="text-align: center; margin-top: 5px; font-size: 0.8rem; color: #888;">
+            <div style="text-align: center; margin-top: 10px; font-size: 0.85rem; color: #666 !important;">
                 📄 {file.name} ({size_kb:.1f} KB)
             </div>
         """, unsafe_allow_html=True)
@@ -151,14 +189,14 @@ with st.container(border=True):
                     result_class = class_names[class_index]
                     confidence = np.max(predictions) * 100
 
-                st.markdown("<hr style='margin: 20px 0; border-top: 1px solid rgba(0,0,0,0.1);'>", unsafe_allow_html=True)
+                st.markdown("<hr style='margin: 20px 0; border-top: 1px solid #eee;'>", unsafe_allow_html=True)
                 
                 # แสดงผลลัพธ์
                 st.markdown(f"""
                     <div style="text-align: center;">
-                        <div style="color: #888; font-size: 0.9rem;">ผลการวินิจฉัย</div>
-                        <h2 style="color: #d32f2f; margin: 10px 0;">{result_class.upper()}</h2>
-                        <div style="background: #f1f1f1; padding: 5px 15px; border-radius: 15px; display: inline-block; font-size: 0.85rem; color: #555;">
+                        <div style="color: #888 !important; font-size: 0.9rem;">ผลการวินิจฉัย</div>
+                        <h2 style="color: #d32f2f !important; margin: 5px 0; font-size: 1.8rem;">{result_class.upper()}</h2>
+                        <div style="background: #f1f1f1; padding: 5px 15px; border-radius: 15px; display: inline-block; font-size: 0.85rem; color: #555 !important;">
                             ความมั่นใจ: {confidence:.2f}%
                         </div>
                     </div>
@@ -182,8 +220,9 @@ with st.container(border=True):
                 elif result_class == 'yellow':
                     treatment_text = "🟡 <b>อาการใบเหลือง:</b> อาจขาดธาตุอาหาร ให้ตรวจสอบสภาพดิน ปรับปรุงดิน และใส่ปุ๋ยบำรุงให้เหมาะสม"
                 
+                # แสดงกล่องคำแนะนำ (ใส่ !important ใน inline style เพื่อกัน CSS หลักทับสี)
                 st.markdown(f"""
-                    <div style="background-color: {bg_color}; color: {text_color}; padding: 20px; border-radius: 16px; margin-top: 20px; font-size: 0.95rem; text-align: left; line-height: 1.5;">
+                    <div style="background-color: {bg_color}; color: {text_color} !important; padding: 20px; border-radius: 16px; margin-top: 20px; font-size: 0.95rem; text-align: left; line-height: 1.5; border: 1px solid rgba(0,0,0,0.05);">
                         {treatment_text}
                     </div>
                 """, unsafe_allow_html=True)
