@@ -17,111 +17,106 @@ st.set_page_config(
 # 2) GLOBAL CSS — ชุดดีไซน์ให้เหมือนหน้า HTML
 # -------------------------------------------------------
 st.markdown("""
-<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <style>
-/* Global Font */
-html, body, [class*="css"], [class*="st-"] {
-    font-family: 'Prompt', sans-serif !important;
-}
 
-/* Background ไล่สีแดงชมพู */
-.stApp {
-    background: linear-gradient(135deg, #FF416C 0%, #FF4B2B 100%) !important;
-    background-attachment: fixed !important;
-}
+    * {
+        font-family: 'Prompt', sans-serif !important;
+    }
 
-/* Glass Card เหมือนหน้า HTML */
-div[data-testid="stVerticalBlockBorderWrapper"] {
-    background: rgba(255, 255, 255, 0.95) !important;
-    backdrop-filter: blur(15px) !important;
-    -webkit-backdrop-filter: blur(15px) !important;
-    border-radius: 24px !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    box-shadow: 0 10px 35px rgba(0,0,0,0.25) !important;
-    padding: 40px 25px !important;
-    max-width: 480px;
-    margin: auto;
-    animation: fadeUp 0.8s ease-out;
-}
+    /* Background */
+    .stApp {
+        background: #f6f6f6 !important;
+        display: flex;
+        justify-content: center;
+        padding-top: 40px;
+        padding-bottom: 40px;
+    }
 
-/* Animations */
-@keyframes fadeUp {
-    from { opacity: 0; transform: translateY(40px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes pulse {
-    0%   { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,75,43,0.3); }
-    70%  { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(255,75,43,0); }
-    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,75,43,0); }
-}
+    /* Main card */
+    .main-card {
+        background: rgba(255,255,255,0.75);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 22px;
+        padding: 40px 35px;
+        width: 420px;
+        margin: auto;
+        box-shadow: 0 10px 28px rgba(0,0,0,0.08);
+        animation: fadeIn 0.9s ease;
+    }
 
-/* Title / Subtitle */
-h1 {
-    color: #333 !important;
-    font-weight: 600 !important;
-    margin-bottom: 0px !important;
-}
-.subtitle {
-    color: #d32f2f !important;
-    text-transform: uppercase;
-    font-weight: 500;
-    letter-spacing: 1px;
-}
+    /* Icon */
+    .icon-circle {
+        width: 75px;
+        height: 75px;
+        border-radius: 50%;
+        background: #111;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 34px;
+        margin: 0 auto 20px;
+        font-weight: 500;
+    }
 
-/* Floating Chili Icon */
-.app-icon {
-    width: 100px;
-    height: 100px;
-    background: linear-gradient(45deg, #ff9a9e 0%, #fad0c4 99%);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 55px;
-    margin: 0 auto 20px;
-    animation: pulse 2s infinite;
-    box-shadow: 0 4px 15px rgba(255,75,43,0.3);
-}
+    /* Title */
+    h1 {
+        text-align: center;
+        margin-bottom: 0;
+        font-weight: 600;
+        color: #111;
+        letter-spacing: -0.5px;
+        font-size: 1.9rem;
+    }
 
-/* Upload zone */
-[data-testid="stFileUploaderDropzone"] {
-    background-color: white !important;
-    border: 2px dashed #FF8A80 !important;
-    border-radius: 20px !important;
-    padding: 35px 20px !important;
-    transition: 0.25s ease;
-}
-[data-testid="stFileUploaderDropzone"]:hover {
-    border-color: #d32f2f !important;
-    background-color: #fff6f5 !important;
-}
+    .subtitle {
+        text-align: center;
+        color: #777;
+        font-size: 0.85rem;
+        margin-top: 3px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
 
-/* Modern Button */
-div.stButton > button {
-    background: linear-gradient(90deg, #FF416C 0%, #FF4B2B 100%) !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 50px !important;
-    padding: 15px 25px !important;
-    font-size: 1.1rem !important;
-    font-weight: 600 !important;
-    box-shadow: 0 5px 15px rgba(255,75,43,0.3) !important;
-    width: 100%;
-    transition: 0.25s ease;
-    margin-top: 10px;
-}
-div.stButton > button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 7px 20px rgba(255,75,43,0.55) !important;
-}
+    /* Upload box */
+    [data-testid="stFileUploaderDropzone"] {
+        background: #ffffff;
+        border-radius: 14px;
+        border: 1px dashed #d0d0d0 !important;
+        padding: 25px;
+    }
 
-/* Hide streamlit default elements */
-#MainMenu, header, footer {visibility: hidden;}
+    /* Button */
+    div.stButton > button {
+        background: #111 !important;
+        color: white !important;
+        border-radius: 40px;
+        padding: 12px 0;
+        width: 100%;
+        font-size: 1rem;
+        font-weight: 500;
+        border: none;
+        transition: 0.25s ease;
+    }
+
+    div.stButton > button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+    }
+
+    /* Fade animation */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(25px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    #MainMenu, header, footer {visibility: hidden;}
+
 </style>
 """, unsafe_allow_html=True)
-
-
 # -------------------------------------------------------
 # 3) LOAD MODEL
 # -------------------------------------------------------
