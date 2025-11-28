@@ -11,7 +11,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- 🎨 ส่วนตกแต่ง CSS (Updated V.2 - บังคับให้ทำงาน 100%) ---
+# --- 🎨 ส่วนตกแต่ง CSS (เวอร์ชันกรอบขาวเด่นชัด) ---
 st.markdown("""
 <style>
     /* นำเข้าฟอนต์ Prompt */
@@ -23,19 +23,15 @@ st.markdown("""
     }
     
     /* 1. พื้นหลังหลัก: สีส้มแดงสดใส */
-    /* ใช้ selector ที่ครอบคลุมที่สุด */
     .stApp, [data-testid="stAppViewContainer"] {
         background: linear-gradient(135deg, #FF416C 0%, #FF4B2B 100%) !important;
     }
 
-    /* 2. กล่องเนื้อหาตรงกลาง (Glass Card) */
-    /* เปลี่ยนวิธีเรียกเป็น data-testid เพื่อความแม่นยำ */
+    /* 2. ลบพื้นหลังกล่องใหญ่เดิมออก (เพื่อให้กรอบเล็กข้างในเด่น) */
     [data-testid="block-container"] {
-        background: rgba(255, 255, 255, 0.95) !important;
-        backdrop-filter: blur(10px);
-        border-radius: 24px !important;
-        padding: 3rem 2rem !important; /* เพิ่ม padding ให้ดูโปร่ง */
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2) !important;
+        background: transparent !important; /* เปลี่ยนเป็นใส */
+        box-shadow: none !important;
+        padding: 2rem 1rem !important;
         max-width: 700px;
     }
 
@@ -46,12 +42,11 @@ st.markdown("""
         text-align: center;
     }
     
-    /* ซ่อน Header/Footer ของ Streamlit */
     #MainMenu {visibility: hidden;}
     header {visibility: hidden;}
     footer {visibility: hidden;}
     
-    /* 3. ปรับแต่งปุ่มกด (Button) - บังคับด้วย !important */
+    /* 3. ปรับแต่งปุ่มกด (Button) */
     div.stButton > button {
         background: linear-gradient(90deg, #FF416C 0%, #FF4B2B 100%) !important;
         color: white !important;
@@ -70,24 +65,28 @@ st.markdown("""
         color: white !important;
     }
     
-    /* 4. ปรับแต่งกรอบ Input Frame (st.container border) */
+    /* 4. ⭐⭐⭐ พระเอกของเรา: กรอบสีขาว (Card) ⭐⭐⭐ */
     [data-testid="stVerticalBlockBorderWrapper"] {
-        background-color: #ffffff !important;
-        border: 2px solid rgba(255, 75, 43, 0.2) !important;
-        border-radius: 20px !important;
-        padding: 20px !important;
+        background-color: #ffffff !important; /* พื้นหลังสีขาวทึบ */
+        border: 1px solid rgba(0,0,0,0.1) !important;
+        border-radius: 25px !important;
+        padding: 30px !important;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2) !important; /* เงาลอยเด่น */
         margin-bottom: 20px !important;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.05) !important;
     }
     
     /* File Uploader Area */
     [data-testid="stFileUploaderDropzone"] {
         background-color: #f8f9fa !important;
-        border: 1px dashed #FF4B2B !important;
-        border-radius: 10px !important;
+        border: 2px dashed #FF4B2B !important; /* เส้นประสีส้ม */
+        border-radius: 15px !important;
+        padding: 20px !important;
+    }
+    div[data-testid="stFileUploaderDropzone"] div {
+        color: #555 !important;
     }
 
-    /* Custom Header Style (HTML) */
+    /* Custom Header Style */
     .custom-header {
         text-align: center;
         margin-bottom: 20px;
@@ -115,17 +114,15 @@ st.markdown("""
         margin-bottom: 5px;
     }
     
-    /* Alert Boxes */
-    [data-testid="stAlert"] {
-        border-radius: 12px !important;
-        border: none !important;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.03) !important;
-    }
-    
     @keyframes pulse {
         0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 75, 43, 0.4); }
         70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(255, 75, 43, 0); }
         100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 75, 43, 0); }
+    }
+    
+    /* จัดการข้อความ info ให้สวยงาม */
+    .stAlert {
+        border-radius: 10px;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -182,9 +179,9 @@ if model is None:
 
 class_names = ['healthy', 'leaf curl', 'leaf spot', 'whitefly', 'yellow']
 
-# --- สร้างกรอบ (Input Frame) พร้อมพื้นหลังสีขาว ---
+# --- ⭐ สร้างกรอบขาว (Card) ครอบทั้งหมดตามที่ต้องการ ⭐ ---
 with st.container(border=True):
-    # ส่วนหัว
+    # 1. ส่วนหัว (Icon + Title)
     st.markdown("""
         <div class="custom-header">
             <div class="app-icon">🌶️</div>
@@ -193,6 +190,7 @@ with st.container(border=True):
         </div>
     """, unsafe_allow_html=True)
 
+    # 2. คำอธิบาย
     st.markdown("""
     <p style="text-align: center; color: #555; margin-bottom: 20px; line-height: 1.6;">
         ระบบผู้เชี่ยวชาญปัญญาประดิษฐ์เพื่อวินิจฉัยโรคของพริกจากใบ <br>
@@ -200,61 +198,67 @@ with st.container(border=True):
     </p>
     """, unsafe_allow_html=True)
 
-    # ส่วนอัปโหลด
+    # 3. ช่องอัปโหลดไฟล์
     file = st.file_uploader("", type=["jpg", "png", "jpeg"])
+    
+    # 4. ข้อความแนะนำ (ใส่ไว้ในกรอบตามที่ขอ)
+    if file is None:
+        st.markdown("""
+            <div style="text-align: center; color: #888; margin-top: 10px; font-size: 0.9rem;">
+                👆 กรุณาเลือกรูปภาพ (.jpg, .png) จากเครื่องของคุณ
+            </div>
+        """, unsafe_allow_html=True)
 
-# --- ส่วนแสดงผลลัพธ์ ---
-if file is None:
-    st.info("👆 กรุณาเลือกรูปภาพ (.jpg, .png) จากเครื่องของคุณ")
-else:
+# --- ส่วนแสดงผลลัพธ์ (อยู่นอกกรอบ Card หลัก จะได้ดูแยกส่วนกัน) ---
+if file is not None:
     image = Image.open(file)
-    st.markdown('<br><div style="text-align: center;">', unsafe_allow_html=True)
-    st.image(image, use_container_width=True)
-    st.markdown('</div>', unsafe_allow_html=True)
     
-    st.markdown("<br>", unsafe_allow_html=True)
-    
-    if st.button("🔍 วิเคราะห์โรค"):
-        with st.spinner('AI กำลังวิเคราะห์ข้อมูล...'):
-            predictions = import_and_predict(image, model)
-            class_index = np.argmax(predictions)
-            result_class = class_names[class_index]
-            confidence = np.max(predictions) * 100
+    # กรอบแสดงผลลัพธ์
+    with st.container(border=True):
+        st.markdown('<div style="text-align: center;">', unsafe_allow_html=True)
+        st.image(image, use_container_width=True)
+        st.markdown('</div><br>', unsafe_allow_html=True)
+        
+        if st.button("🔍 วิเคราะห์โรค"):
+            with st.spinner('AI กำลังวิเคราะห์ข้อมูล...'):
+                predictions = import_and_predict(image, model)
+                class_index = np.argmax(predictions)
+                result_class = class_names[class_index]
+                confidence = np.max(predictions) * 100
 
-        # แสดงผลลัพธ์
-        st.markdown("<hr style='border-top: 1px solid #eee; margin: 30px 0;'>", unsafe_allow_html=True)
-        st.markdown(f"""
-            <div style="background-color: #f0fff4; border: 1px solid #c3e6cb; padding: 20px; border-radius: 15px; text-align: center; margin-bottom: 15px;">
-                <h4 style="margin:0; color: #155724; font-weight: 600;">ผลการวิเคราะห์: <span style="font-size: 1.4rem;">{result_class}</span></h4>
-            </div>
-            <p style="text-align: center; color: #6c757d; font-size: 0.9rem;">ความมั่นใจ (Confidence): <b>{confidence:.2f}%</b></p>
-        """, unsafe_allow_html=True)
+            # การ์ดผลลัพธ์
+            st.markdown(f"""
+                <div style="background-color: #f0fff4; border: 1px solid #c3e6cb; padding: 20px; border-radius: 15px; text-align: center; margin-bottom: 15px;">
+                    <h4 style="margin:0; color: #155724; font-weight: 600;">ผลการวิเคราะห์: <span style="font-size: 1.4rem;">{result_class}</span></h4>
+                </div>
+                <p style="text-align: center; color: #6c757d; font-size: 0.9rem;">ความมั่นใจ (Confidence): <b>{confidence:.2f}%</b></p>
+            """, unsafe_allow_html=True)
 
-        # คำแนะนำ
-        treatment_text = ""
-        treatment_bg = "#fff8e1"
-        treatment_border = "#ffeeba"
-        text_color = "#856404"
+            # คำแนะนำ
+            treatment_text = ""
+            treatment_bg = "#fff8e1"
+            treatment_border = "#ffeeba"
+            text_color = "#856404"
 
-        if result_class == 'healthy':
-            treatment_text = "✅ **ต้นพริกแข็งแรงดี!** ไม่พบร่องรอยโรค หมั่นดูแลรดน้ำตามปกติ"
-            treatment_bg = "#d4edda"
-            treatment_border = "#c3e6cb"
-            text_color = "#155724"
-        elif result_class == 'leaf curl':
-            treatment_text = "⚠️ **คำแนะนำ:** โรคใบหงิกมักเกิดจากแมลงหวี่ขาว ให้กำจัดวัชพืชและใช้สารสกัดสะเดา หรือเชื้อราเมตาไรเซียมฉีดพ่น"
-        elif result_class == 'leaf spot':
-            treatment_text = "⚠️ **คำแนะนำ:** โรคใบจุดตากบ เกิดจากเชื้อรา ให้ตัดแต่งใบที่เป็นโรคเผาทำลาย และฉีดพ่นสารป้องกันเชื้อรา"
-        elif result_class == 'whitefly':
-             treatment_text = "⚠️ **คำแนะนำ:** พบแมลงหวี่ขาว ให้ใช้กับดักกาวเหนียวสีเหลือง หรือฉีดพ่นน้ำหมักสมุนไพร"
-        elif result_class == 'yellow':
-             treatment_text = "⚠️ **คำแนะนำ:** อาการใบเหลือง อาจเกิดจากการขาดสารอาหาร หรือไวรัส ควรตรวจสอบดินและใส่ปุ๋ยบำรุง"
-             
-        st.markdown(f"""
-            <div style="background-color: {treatment_bg}; color: {text_color}; padding: 18px; border-radius: 12px; border: 1px solid {treatment_border}; line-height: 1.6;">
-                {treatment_text}
-            </div>
-        """, unsafe_allow_html=True)
+            if result_class == 'healthy':
+                treatment_text = "✅ **ต้นพริกแข็งแรงดี!** ไม่พบร่องรอยโรค หมั่นดูแลรดน้ำตามปกติ"
+                treatment_bg = "#d4edda"
+                treatment_border = "#c3e6cb"
+                text_color = "#155724"
+            elif result_class == 'leaf curl':
+                treatment_text = "⚠️ **คำแนะนำ:** โรคใบหงิกมักเกิดจากแมลงหวี่ขาว ให้กำจัดวัชพืชและใช้สารสกัดสะเดา หรือเชื้อราเมตาไรเซียมฉีดพ่น"
+            elif result_class == 'leaf spot':
+                treatment_text = "⚠️ **คำแนะนำ:** โรคใบจุดตากบ เกิดจากเชื้อรา ให้ตัดแต่งใบที่เป็นโรคเผาทำลาย และฉีดพ่นสารป้องกันเชื้อรา"
+            elif result_class == 'whitefly':
+                 treatment_text = "⚠️ **คำแนะนำ:** พบแมลงหวี่ขาว ให้ใช้กับดักกาวเหนียวสีเหลือง หรือฉีดพ่นน้ำหมักสมุนไพร"
+            elif result_class == 'yellow':
+                 treatment_text = "⚠️ **คำแนะนำ:** อาการใบเหลือง อาจเกิดจากการขาดสารอาหาร หรือไวรัส ควรตรวจสอบดินและใส่ปุ๋ยบำรุง"
+                 
+            st.markdown(f"""
+                <div style="background-color: {treatment_bg}; color: {text_color}; padding: 18px; border-radius: 12px; border: 1px solid {treatment_border}; line-height: 1.6;">
+                    {treatment_text}
+                </div>
+            """, unsafe_allow_html=True)
 
 # Footer
 st.markdown("""
