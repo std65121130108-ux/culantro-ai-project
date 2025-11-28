@@ -1,245 +1,243 @@
 import streamlit as st
+
 import tensorflow as tf
+
 from PIL import Image, ImageOps
+
 import numpy as np
+
 import os
 
+
+
 # --- 1. ตั้งค่าหน้าเว็บ ---
+
 st.set_page_config(
+
     page_title="Chili Doctor AI",
+
     page_icon="🌶️",
-    layout="centered" # จัดให้อยู่ตรงกลาง
+
+    layout="centered"
+
 )
 
-# --- 2. 🎨 CSS ตกแต่ง (New Method: Style the Main Block directly) ---
-st.markdown("""
-<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700&display=swap" rel="stylesheet">
-<style>
-    /* บังคับฟอนต์ Prompt */
-    html, body, [class*="css"], [class*="st-"] {
-        font-family: 'Prompt', sans-serif !important;
-    }
 
-    /* 1. พื้นหลังใหญ่สุด (The Body) ให้เป็นสีแดง Gradient */
-    .stApp {
-        background: linear-gradient(135deg, #FF416C 0%, #FF4B2B 100%) !important;
-        background-attachment: fixed !important;
-    }
 
-    /* 2. *** ไม้ตายใหม่ ***: ปรับพื้นที่เนื้อหาหลัก (Block Container) ให้เป็นการ์ดสีขาว */
-    [data-testid="block-container"] {
-        background-color: #ffffff !important; /* ขาวทึบ */
-        border-radius: 30px !important;
-        padding: 3rem !important; /* เว้นขอบด้านใน */
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2) !important;
-        max-width: 550px; /* จำกัดความกว้างให้ดูเหมือนการ์ด */
-        margin: auto; /* จัดกึ่งกลาง */
-        margin-top: 50px; /* เว้นระยะจากขอบบน */
-    }
+# --- 2. ฟังก์ชันโหลดโมเดล (ดาวน์โหลดจาก Google Drive อัตโนมัติ) ---
 
-    /* 3. Typography */
-    h1 {
-        color: #FF4B2B !important;
-        font-weight: 800 !important;
-        text-align: center;
-        margin-bottom: 5px !important;
-    }
-    
-    .subtitle {
-        color: #666 !important;
-        font-size: 1.1rem !important;
-        text-align: center;
-        margin-bottom: 20px;
-        font-weight: 400;
-    }
-    
-    .tech-badge {
-        background: #ffebee;
-        color: #c62828;
-        padding: 6px 16px;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        display: inline-block;
-    }
-
-    /* 4. Upload Area */
-    [data-testid="stFileUploaderDropzone"] {
-        background-color: #f8f9fa !important;
-        border: 2px dashed #FF4B2B !important;
-        border-radius: 20px !important;
-        padding: 20px !important;
-    }
-    [data-testid="stFileUploaderDropzone"] div div::before {
-        content: "Drag & Drop Image Here";
-        color: #555;
-        font-weight: 600;
-    }
-    [data-testid="stFileUploaderDropzone"] small {
-        color: #888 !important;
-    }
-
-    /* 5. Button */
-    div.stButton > button {
-        background: linear-gradient(90deg, #FF416C 0%, #FF4B2B 100%) !important;
-        color: white !important;
-        border: none !important;
-        border-radius: 50px !important;
-        padding: 15px 30px !important;
-        font-size: 1.1rem !important;
-        font-weight: 600 !important;
-        box-shadow: 0 10px 20px rgba(255, 75, 43, 0.3) !important;
-        width: 100%;
-        margin-top: 15px;
-        transition: transform 0.2s;
-    }
-    div.stButton > button:hover {
-        transform: scale(1.02);
-    }
-    div.stButton > button p {
-        color: white !important;
-    }
-
-    /* Footer */
-    .footer {
-        text-align: center;
-        margin-top: 30px;
-        color: #999; /* สีเทาเข้มขึ้นเพราะอยู่บนพื้นขาวแล้ว */
-        font-size: 0.8rem;
-    }
-    
-    /* ซ่อน Header เดิมของ Streamlit */
-    #MainMenu, header, footer {visibility: hidden;}
-
-</style>
-""", unsafe_allow_html=True)
-
-# --- 3. โหลดโมเดล ---
 @st.cache_resource
+
 def load_model():
+
+    # ชื่อไฟล์ที่เราจะให้เซฟลงในเครื่อง Server
+
     filename = 'efficientnetb4_model.h5'
+
+   
+
+    # ถ้ายังไม่มีไฟล์นี้ในเครื่อง ให้โหลดจาก Google Drive ก่อน
+
     if not os.path.exists(filename):
-        pass 
+
+        # ID ที่คุณให้มา
+
+        file_id = '1tURhAR8mXLAgnuU3EULswpcFGxnalWAV'
+
+       
+
+        url = f'https://drive.google.com/uc?id={file_id}'
+
+       
+
+        st.info(f"⏳ กำลังดาวน์โหลดโมเดลจาก Google Drive... (ID: {file_id})")
+
+       
+
+        try:
+
+            import gdown
+
+            # สั่งดาวน์โหลด
+
+            gdown.download(url, filename, quiet=False)
+
+           
+
+            # เช็คว่าไฟล์มาจริงไหม
+
+            if os.path.exists(filename):
+
+                st.success("✅ ดาวน์โหลดสำเร็จ! กำลังเริ่มระบบ...")
+
+            else:
+
+                st.error("❌ ดาวน์โหลดไม่สำเร็จ ไฟล์ไม่ถูกสร้าง")
+
+                return None
+
+        except Exception as e:
+
+            st.error(f"❌ เกิดข้อผิดพลาดในการดาวน์โหลด: {e}")
+
+            return None
+
+
+
+    # โหลดโมเดลจากไฟล์ที่อยู่ในเครื่องแล้ว
+
     try:
-        return tf.keras.models.load_model(filename)
-    except:
+
+        # สังเกตว่าเราโหลดจากชื่อไฟล์ filename ไม่ใช่ file_id
+
+        model = tf.keras.models.load_model(filename)
+
+        return model
+
+    except Exception as e:
+
+        st.error(f"❌ ไฟล์โมเดลมีปัญหา: {e}")
+
         return None
 
-def import_and_predict(image_data, model):
-    size = (300, 300)
-    image = ImageOps.fit(image_data, size, Image.Resampling.LANCZOS)
-    img_array = np.asarray(image).astype(np.float32)
-    data = np.ndarray(shape=(1, 300, 300, 3), dtype=np.float32)
-    data[0] = img_array
-    return model.predict(data)
 
-# --- 4. ส่วนแสดงผล UI (ไม่ต้องใช้ st.container แล้ว) ---
+
+# --- 3. ฟังก์ชันเตรียมรูปก่อนส่งให้ AI ---
+
+def import_and_predict(image_data, model):
+
+    # EfficientNetB4 ใช้ขนาด 300x300
+
+    size = (300, 300)
+
+   
+
+    image = ImageOps.fit(image_data, size, Image.Resampling.LANCZOS)
+
+    img_array = np.asarray(image)
+
+   
+
+    # EfficientNet ไม่ต้องหาร 255 (ใช้ค่า 0-255 ได้เลย)
+
+    # แต่ต้องแปลงเป็น float32
+
+    img_array = img_array.astype(np.float32)
+
+   
+
+    # สร้าง array 4 มิติ (1, 300, 300, 3)
+
+    data = np.ndarray(shape=(1, 300, 300, 3), dtype=np.float32)
+
+    data[0] = img_array
+
+   
+
+    prediction = model.predict(data)
+
+    return prediction
+
+   
+
+# --- 4. ส่วนแสดงผลหน้าเว็บ ---
+
+st.title("🌶️ AI ตรวจจับโรคพริก")
+
+st.markdown("""
+
+ระบบผู้เชี่ยวชาญปัญญาประดิษฐ์เพื่อวินิจฉัยโรคของพริกจากใบ
+
+**โปรดอัปโหลดรูปภาพใบพริกเพื่อเริ่มต้น**
+
+""")
+
+
+
+# เรียกใช้ฟังก์ชันโหลดโมเดล
 
 model = load_model()
 
-# --- ส่วนเนื้อหา ---
-# ไม่ต้องมี with st.container(border=True): แล้ว เพราะเราแต่ง block-container แทน
 
-# Header
-st.markdown("""
-    <div style="text-align: center;">
-        <div style="font-size: 4rem; margin-bottom: 5px;">🌶️</div>
-        <h1>Chili Doctor AI</h1>
-        <div class="subtitle">ระบบผู้เชี่ยวชาญตรวจวินิจฉัยโรคพริกอัจฉริยะ</div>
-        <span class="tech-badge">Deep Learning (EfficientNetB4)</span>
-    </div>
-""", unsafe_allow_html=True)
 
-st.markdown("<br>", unsafe_allow_html=True)
+# ถ้าโหลดโมเดลไม่ได้ ให้หยุดทำงาน
 
-# พื้นที่อัปโหลด
-file = st.file_uploader("", type=["jpg", "png", "jpeg"])
+if model is None:
 
-if file is not None:
+    st.stop()
+
+
+
+# ชื่อคลาส
+
+class_names = ['healthy', 'leaf curl', 'leaf spot', 'whitefly', 'yellow']
+
+
+
+# อัปโหลดไฟล์
+
+file = st.file_uploader("เลือกรูปภาพ (.jpg, .png)", type=["jpg", "png", "jpeg"])
+
+
+
+if file is None:
+
+    st.info("กรุณาเลือกรูปภาพ...")
+
+else:
+
     image = Image.open(file)
-    
-    # แสดงรูปภาพ
-    st.markdown("<br>", unsafe_allow_html=True)
-    col1, col2, col3 = st.columns([1, 4, 1])
-    with col2:
-        st.image(image, use_container_width=True)
-    
-    # ปุ่มกด
-    if st.button("🚀 วินิจฉัยโรค (Start Diagnosis)"):
-        if model is None:
-            st.error("⚠️ Model file not found.")
-        else:
-            with st.spinner('กำลังวิเคราะห์...'):
-                predictions = import_and_predict(image, model)
-                class_names = ['Healthy', 'Leaf Curl', 'Leaf Spot', 'Whitefly', 'Yellow']
-                class_index = np.argmax(predictions)
-                result_class = class_names[class_index]
-                confidence = np.max(predictions) * 100
 
-            # --- ส่วนแสดงผลลัพธ์ ---
-            treatment_text = ""
-            icon = ""
-            box_color = "#f8f9fa"
-            border_color = "#ccc"
-            diagram_query = "" # placeholder for diagram query
-            
-            if result_class == 'Healthy':
-                treatment_text = "ต้นพริกแข็งแรงดีมาก! แนะนำให้ดูแลรดน้ำและใส่ปุ๋ยบำรุงตามปกติ"
-                icon = "🌿"
-                box_color = "#e8f5e9" # เขียวอ่อน
-                border_color = "#4caf50"
-            elif result_class == 'Leaf Curl':
-                treatment_text = "โรคใบหงิก: ระวังแมลงพาหะ (เช่น แมลงหวี่ขาว) กำจัดวัชพืช และใช้สารสกัดสะเดาฉีดพ่น"
-                icon = "🍂"
-                box_color = "#fff3e0" # ส้มอ่อน
-                border_color = "#ff9800"
-                diagram_query = "leaf curl disease chili cycle"
-            elif result_class == 'Leaf Spot':
-                treatment_text = "โรคใบจุด: เกิดจากเชื้อรา ให้ตัดแต่งใบที่เป็นโรคเผาทำลาย และฉีดพ่นสารป้องกันกำจัดเชื้อรา"
-                icon = "🌑"
-                box_color = "#ffebee" # แดงอ่อน
-                border_color = "#f44336"
-                diagram_query = "cercospora leaf spot chili cycle"
-            elif result_class == 'Whitefly':
-                treatment_text = "แมลงหวี่ขาว: เป็นพาหะนำโรค ให้ใช้กับดักกาวเหนียวสีเหลือง หรือฉีดพ่นน้ำหมักสมุนไพรไล่แมลง"
-                icon = "🪰"
-                box_color = "#e3f2fd" # ฟ้าอ่อน
-                border_color = "#2196f3"
-                diagram_query = "whitefly life cycle chili"
-            elif result_class == 'Yellow':
-                treatment_text = "อาการใบเหลือง: อาจเกิดจากการขาดธาตุอาหาร ตรวจสอบสภาพดินและใส่ปุ๋ยบำรุง"
-                icon = "🟡"
-                box_color = "#fffde7" # เหลืองอ่อน
-                border_color = "#ffeb3b"
-                diagram_query = "nitrogen deficiency chili leaves"
+    st.image(image, use_container_width=True)
 
-            st.markdown(f"""
-                <div style="text-align: center; margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px;">
-                    <div style="color: #888; font-size: 0.9rem;">ผลการวิเคราะห์</div>
-                    <div style="color: #FF4B2B; font-size: 2.2rem; font-weight: 800; margin: 10px 0;">{result_class.upper()}</div>
-                    <span style="background: #FF4B2B; color: white; padding: 5px 15px; border-radius: 20px; font-weight: 600;">
-                        ความแม่นยำ: {confidence:.2f}%
-                    </span>
-                    
-                    <div style="background-color: {box_color}; border-left: 5px solid {border_color}; padding: 20px; border-radius: 10px; text-align: left; margin-top: 25px; display: flex; align-items: start;">
-                        <div style="font-size: 2rem; margin-right: 15px;">{icon}</div>
-                        <div>
-                            <h4 style="margin: 0 0 5px 0; color: #333;">คำแนะนำ</h4>
-                            <p style="color: #444; margin: 0; line-height: 1.5;">{treatment_text}</p>
-                        </div>
-                    </div>
-                </div>
-            """, unsafe_allow_html=True)
-            
-            # Trigger specific diagrams for diseases
-            if diagram_query:
-                 st.markdown(f"", unsafe_allow_html=True)
+   
+
+    if st.button("🔍 วิเคราะห์โรค", type="primary"):
+
+        with st.spinner('AI กำลังตรวจสอบ...'):
+
+            predictions = import_and_predict(image, model)
+
+           
+
+            # หาผลลัพธ์ที่มั่นใจที่สุด
+
+            class_index = np.argmax(predictions)
+
+            result_class = class_names[class_index]
+
+            confidence = np.max(predictions) * 100
 
 
-# Footer
-st.markdown("""
-    <div class="footer">
-        Computer Research Project • UBRU<br>
-        Designed by WhiteCat Team
-    </div>
-""", unsafe_allow_html=True)
+
+        # --- แสดงผลลัพธ์ ---
+
+        st.success(f"ผลการวิเคราะห์: **{result_class}**")
+
+        st.metric(label="ความมั่นใจ (Confidence)", value=f"{confidence:.2f}%")
+
+
+
+        # --- คำแนะนำการรักษา ---
+
+        if result_class == 'healthy':
+
+            st.balloons()
+
+            st.write("✅ **ต้นพริกแข็งแรงดี!** ไม่พบร่องรอยโรค")
+
+        elif result_class == 'leaf curl':
+
+            st.warning("⚠️ **คำแนะนำ:** โรคใบหงิกมักเกิดจากแมลงหวี่ขาว ให้กำจัดวัชพืชและใช้สารสกัดสะเดา")
+
+        elif result_class == 'leaf spot':
+
+            st.warning("⚠️ **คำแนะนำ:** โรคใบจุดตากบ เกิดจากเชื้อรา ให้ตัดแต่งใบที่เป็นโรคเผาทำลาย และฉีดพ่นสารป้องกันเชื้อรา")
+
+        elif result_class == 'whitefly':
+
+             st.warning("⚠️ **คำแนะนำ:** พบแมลงหวี่ขาว ให้ใช้กับดักกาวเหนียวสีเหลือง หรือฉีดพ่นน้ำหมักสมุนไพร")
+
+        elif result_class == 'yellow':
+
+             st.warning("⚠️ **คำแนะนำ:** อาการใบเหลือง อาจเกิดจากการขาดสารอาหาร หรือไวรัส ควรตรวจสอบดินและใส่ปุ๋ยบำรุง")
