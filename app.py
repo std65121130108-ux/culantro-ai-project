@@ -229,7 +229,11 @@ def import_and_predict(image_data, model):
 
 model = load_model()
 
-# 1. ส่วนหัว
+# ⭐ 1. สร้างตัวแปรนับจำนวนครั้งการรีเซ็ต (เอาไว้เปลี่ยนชื่อ Key ของกล้อง) ⭐
+if 'reset_count' not in st.session_state:
+    st.session_state['reset_count'] = 0
+
+# ส่วนหัว
 st.markdown("""
     <div style="text-align: center;">
         <div class="app-icon">🌶️</div>
@@ -243,34 +247,65 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# 2. ส่วนรับข้อมูล (Tabs: ถ่ายภาพ / อัปโหลด)
+# 2. ส่วนรับข้อมูล (Tabs)
 tab_cam, tab_up = st.tabs(["📸 ถ่ายภาพใบพริก", "📂 อัปโหลดไฟล์รูป"])
 
 img_file_buffer = None
 
+# สร้าง Dynamic Key โดยอิงจาก reset_count
+# เช่น camera_0, camera_1, camera_2 ... พอชื่อเปลี่ยน กล้องจะรีเซ็ตตัวเอง
+camera_key = f"camera_{st.session_state['reset_count']}"
+uploader_key = f"uploader_{st.session_state['reset_count']}"
+
 with tab_cam:
-    st.markdown("<div style='text-align: center; color: #666; margin-bottom: 10px;'>กดปุ่มด้านล่างเพื่อถ่ายรูป</div>", unsafe_allow_html=True)
-    camera_image = st.camera_input("กล้องถ่ายรูป", label_visibility="hidden")
+    # ส่วนกล้องถ่ายรูป
+    camera_image = st.camera_input("กล้องถ่ายรูป", label_visibility="hidden", key=camera_key)
+    
     if camera_image is not None:
         img_file_buffer = camera_image
+    
+    # แก้ไขตรงนี้: เอาข้อความใส่ใน st.markdown และเปิด unsafe_allow_html=True
+    st.markdown(
+        "<div style='text-align: center; color: #666; margin-top: 10px;'>กดปุ่ม Take Photo ใต้รูปภาพเพื่อถ่ายรูป</div>", 
+        unsafe_allow_html=True
+    )
 
 with tab_up:
-    uploaded_file = st.file_uploader("เลือกรูปภาพจากเครื่อง", type=["jpg", "png", "jpeg"])
+    # ใช้ dynamic key เช่นกัน
+    uploaded_file = st.file_uploader("เลือกรูปภาพจากเครื่อง", type=["jpg", "png", "jpeg"], key=uploader_key)
     if uploaded_file is not None:
         img_file_buffer = uploaded_file
 
-# 3. ส่วนแสดงผลและทำนาย
+# 3. ส่วนแสดงผลและปุ่มกด
 if img_file_buffer is not None:
     image = Image.open(img_file_buffer)
     
     st.markdown("<br>", unsafe_allow_html=True)
+    
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
         st.markdown('<div style="border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border: 3px solid rgba(255,255,255,0.8);">', unsafe_allow_html=True)
         st.image(image, use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
         
-    if st.button("🚀 วินิจฉัยโรคทันที"):
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # ปุ่มกดคู่
+    b1, b2 = st.columns(2, gap="medium")
+    
+    with b1:
+        predict_click = st.button("🚀 วินิจฉัยโรคทันที", use_container_width=True)
+        
+    with b2:
+        reset_click = st.button("🔄 ถ่ายรูปใหม่อีกครั้ง", use_container_width=True)
+
+    # --- ⭐ แก้ไข Logic: แค่เพิ่มตัวเลข reset_count ก็พอ ⭐ ---
+    if reset_click:
+        # พอตัวเลขเพิ่ม -> key เปลี่ยน -> widget ถูกสร้างใหม่ -> รูปหาย
+        st.session_state['reset_count'] += 1
+        st.rerun()
+
+    if predict_click:
         if model is None:
             st.error("❌ ไม่สามารถโหลดโมเดลได้")
         else:
@@ -281,10 +316,8 @@ if img_file_buffer is not None:
                 result_class = class_names[class_index]
                 confidence = np.max(predictions) * 100
 
-            # เส้นคั่น
             st.markdown("<div style='height: 1px; background-color: rgba(0,0,0,0.1); margin: 30px 0;'></div>", unsafe_allow_html=True)
             
-            # ผลลัพธ์
             st.markdown(f"""
                 <div style="text-align: center;">
                     <h3 style="color: #666; font-size: 1rem; margin-bottom: 5px;">ผลการวิเคราะห์</h3>
@@ -319,7 +352,6 @@ if img_file_buffer is not None:
                   treatment_text = "อาการใบเหลือง อาจเกิดจากการขาดสารอาหาร หรือไวรัส ควรตรวจสอบดินและใส่ปุ๋ยบำรุง"
                   icon = "🟡"
             
-            # กล่องคำแนะนำ
             st.markdown(f"""
                 <div style="background-color: {bg_color}; padding: 25px; border-radius: 15px; margin-top: 25px; text-align: left; border: 1px solid rgba(0,0,0,0.05);">
                     <div style="display: flex; align-items: start;">
