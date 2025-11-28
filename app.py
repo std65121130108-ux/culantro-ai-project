@@ -11,7 +11,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- 2. 🎨 CSS ตกแต่ง (Design: Solid White Card 100%) ---
+# --- 2. 🎨 CSS ตกแต่ง (ฉบับบังคับขาวด้วย Layer พิเศษ) ---
 st.markdown("""
 <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -26,30 +26,41 @@ st.markdown("""
         background-attachment: fixed !important;
     }
 
-    /* 2. Main White Card (แก้ให้เป็นสีขาวทึบ 100% ห้ามใส) */
+    /* 2. บังคับการ์ดขาว (ใช้เทคนิค ::before สร้างพื้นหลังสีขาวทับลงไปเลย) */
     div[data-testid="stVerticalBlockBorderWrapper"] {
-        background-color: #ffffff !important; /* สีขาวทึบ */
-        background: #ffffff !important;       /* ย้ำว่าเป็นสีขาว */
+        position: relative !important;
+        background: #ffffff !important; /* สั่งให้ขาว */
+        background-color: #ffffff !important;
+        z-index: 1;
         border-radius: 30px !important;
-        border: none !important;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15) !important;
+        border: none !important; /* เอาเส้นขอบเทาออก */
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2) !important;
         padding: 40px 30px !important;
         max-width: 550px;
         margin: auto;
-        
-        /* แก้ปัญหาพื้นหลังใส */
-        opacity: 1 !important;
-        backdrop-filter: none !important;
     }
 
-    /* 3. Typography: ปรับสีตัวหนังสือในกรอบให้ชัดเจน */
+    /* สร้างแผ่นสีขาวรองหลังอีกชั้น เพื่อความชัวร์ 100% */
+    div[data-testid="stVerticalBlockBorderWrapper"]::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #ffffff !important;
+        border-radius: 30px !important;
+        z-index: -1;
+    }
+
+    /* 3. Typography: บังคับสีตัวหนังสือให้เข้ม (เพราะพื้นหลังขาวแล้ว) */
     div[data-testid="stVerticalBlockBorderWrapper"] h1 {
         color: #FF4B2B !important; /* หัวข้อสีแดง */
-        font-weight: 700 !important;
+        font-weight: 800 !important;
         font-size: 2.5rem !important;
         margin-bottom: 5px !important;
         text-align: center;
-        text-shadow: none !important; /* เอาเงาออกเพื่อให้คมชัดบนพื้นขาว */
+        text-shadow: none !important;
     }
     
     .subtitle {
@@ -121,16 +132,6 @@ st.markdown("""
         font-weight: 800;
         margin: 10px 0;
     }
-    .recommendation-box {
-        background-color: #fff8e1;
-        border-left: 6px solid #ffc107;
-        padding: 20px;
-        border-radius: 10px;
-        text-align: left;
-        margin-top: 20px;
-        display: flex;
-        align-items: start;
-    }
 
     /* Footer */
     .footer {
@@ -168,7 +169,7 @@ def import_and_predict(image_data, model):
 
 model = load_model()
 
-# สร้าง Container (กรอบขาว)
+# สร้าง Container (Border=True เพื่อให้ CSS จับ ID ได้)
 with st.container(border=True):
     
     # Header
@@ -212,6 +213,7 @@ with st.container(border=True):
                 icon = ""
                 box_color = "#f8f9fa"
                 border_color = "#ccc"
+                diagram_query = "" # placeholder for diagram query
                 
                 if result_class == 'Healthy':
                     treatment_text = "ต้นพริกแข็งแรงดีมาก! แนะนำให้ดูแลรดน้ำและใส่ปุ๋ยบำรุงตามปกติ"
@@ -223,21 +225,25 @@ with st.container(border=True):
                     icon = "🍂"
                     box_color = "#fff3e0" # ส้มอ่อน
                     border_color = "#ff9800"
+                    diagram_query = "leaf curl disease chili cycle"
                 elif result_class == 'Leaf Spot':
                     treatment_text = "โรคใบจุด: เกิดจากเชื้อรา ให้ตัดแต่งใบที่เป็นโรคเผาทำลาย และฉีดพ่นสารป้องกันกำจัดเชื้อรา"
                     icon = "🌑"
                     box_color = "#ffebee" # แดงอ่อน
                     border_color = "#f44336"
+                    diagram_query = "cercospora leaf spot chili cycle"
                 elif result_class == 'Whitefly':
                     treatment_text = "แมลงหวี่ขาว: เป็นพาหะนำโรค ให้ใช้กับดักกาวเหนียวสีเหลือง หรือฉีดพ่นน้ำหมักสมุนไพรไล่แมลง"
                     icon = "🪰"
                     box_color = "#e3f2fd" # ฟ้าอ่อน
                     border_color = "#2196f3"
+                    diagram_query = "whitefly life cycle chili"
                 elif result_class == 'Yellow':
                     treatment_text = "อาการใบเหลือง: อาจเกิดจากการขาดธาตุอาหาร ตรวจสอบสภาพดินและใส่ปุ๋ยบำรุง"
                     icon = "🟡"
                     box_color = "#fffde7" # เหลืองอ่อน
                     border_color = "#ffeb3b"
+                    diagram_query = "nitrogen deficiency chili leaves"
 
                 st.markdown(f"""
                     <div class="result-container">
@@ -256,6 +262,11 @@ with st.container(border=True):
                         </div>
                     </div>
                 """, unsafe_allow_html=True)
+                
+                # Trigger specific diagrams for diseases
+                if diagram_query:
+                     st.markdown(f"", unsafe_allow_html=True)
+
 
 # Footer นอกกรอบขาว
 st.markdown("""
