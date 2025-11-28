@@ -11,6 +11,123 @@ st.set_page_config(
     layout="centered"
 )
 
+# --- 2. 🎨 CSS ดีไซน์ใหม่ (Modern Minimalist Tech) ---
+st.markdown("""
+<style>
+    /* นำเข้าฟอนต์ Prompt */
+    @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap');
+    
+    /* บังคับฟอนต์ทั้งหน้า */
+    html, body, [class*="css"] {
+        font-family: 'Prompt', sans-serif;
+        color: #1a1a1a;
+    }
+    
+    /* 1. พื้นหลัง: ลายจุด Modern Tech Pattern */
+    .stApp {
+        background-color: #f8f9fa;
+        background-image: radial-gradient(#e0e0e0 1px, transparent 1px);
+        background-size: 20px 20px;
+    }
+
+    /* 2. การ์ดหลัก (Main Card) */
+    [data-testid="stVerticalBlockBorderWrapper"] {
+        background-color: #ffffff !important;
+        border-radius: 24px !important;
+        padding: 40px !important;
+        box-shadow: 0 20px 40px -10px rgba(0,0,0,0.08) !important; /* เงาฟุ้งๆ นุ่มๆ */
+        border: 1px solid rgba(0,0,0,0.05) !important;
+        margin-bottom: 20px;
+    }
+    
+    /* 3. Typography (จัดตัวหนังสือ) */
+    .badge {
+        background-color: #fff0f0;
+        color: #ff4b4b;
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        display: inline-block;
+        margin-bottom: 15px;
+    }
+    
+    h1 {
+        color: #111;
+        font-weight: 800 !important;
+        font-size: 2.8rem !important;
+        letter-spacing: -1.5px;
+        margin-bottom: 10px !important;
+    }
+    
+    .desc {
+        color: #666;
+        font-size: 1.1rem;
+        font-weight: 400;
+        line-height: 1.6;
+        margin-bottom: 30px;
+    }
+    
+    /* 4. ช่องอัปโหลด (Minimal Style) */
+    [data-testid="stFileUploaderDropzone"] {
+        background-color: #fafafa !important;
+        border: 2px dashed #e0e0e0 !important;
+        border-radius: 16px !important;
+        padding: 40px 20px !important;
+        transition: all 0.3s ease;
+    }
+    [data-testid="stFileUploaderDropzone"]:hover {
+        border-color: #ff4b4b !important;
+        background-color: #fffbfb !important;
+        transform: scale(1.01);
+    }
+    /* ข้อความใน Dropzone */
+    [data-testid="stFileUploaderDropzone"] div div::before {
+        content: "รูปภาพใบพริก";
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #333;
+        display: block;
+        margin-bottom: 5px;
+    }
+    
+    /* 5. ปุ่มกด (Black Button Style - เท่ๆ) */
+    div.stButton > button {
+        background-color: #111 !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 14px !important;
+        padding: 16px 32px !important;
+        font-size: 1.1rem !important;
+        font-weight: 600 !important;
+        width: 100% !important;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+    }
+    div.stButton > button:hover {
+        background-color: #ff4b4b !important; /* เปลี่ยนเป็นสีแดงเมื่อชี้ */
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgba(255, 75, 75, 0.25) !important;
+    }
+    
+    /* ซ่อน Header/Footer */
+    #MainMenu {visibility: hidden;}
+    header {visibility: hidden;}
+    footer {visibility: hidden;}
+    
+    /* Result Styling */
+    .result-box {
+        background: #f8fff9;
+        border-left: 6px solid #00c853;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 20px;
+    }
+</style>
+""", unsafe_allow_html=True)
+
 # --- 3. โหลดโมเดล (ฟังก์ชันเดิม) ---
 @st.cache_resource
 def load_model():
@@ -18,12 +135,12 @@ def load_model():
     if not os.path.exists(filename):
         file_id = '1tURhAR8mXLAgnuU3EULswpcFGxnalWAV'
         url = f'https://drive.google.com/uc?id={file_id}'
-        with st.status("⏳ กำลังดาวน์โหลดโมเดล...", expanded=True) as status:
+        with st.status("🚀 Initializing System...", expanded=True) as status:
             try:
                 import gdown
                 gdown.download(url, filename, quiet=False)
                 if os.path.exists(filename):
-                    status.update(label="✅ เสร็จสิ้น!", state="complete", expanded=False)
+                    status.update(label="System Ready!", state="complete", expanded=False)
                 else:
                     return None
             except:
@@ -47,97 +164,103 @@ def import_and_predict(image_data, model):
 model = load_model()
 
 # ==========================================
-# ⬜ ส่วน Input (การ์ดใบที่ 1)
+# ⬜ ส่วน Input (Clean Card)
 # ==========================================
-with st.container(border=True): # สร้างกรอบขาว
-    
-    # ไอคอน + หัวข้อ
+with st.container(border=True):
+    # Header Section
     st.markdown("""
-        <div class="icon-wrapper">
-            <div class="main-icon">🌶️</div>
-        </div>
-        <div class="app-subtitle">AI Expert System</div>
-        <div class="app-title">Chili Doctor AI</div>
-        
-        <div class="app-desc">
-            ระบบผู้เชี่ยวชาญปัญญาประดิษฐ์เพื่อวินิจฉัยโรคของพริกจากใบ
-        </div>
-        <div class="app-note">
-            (กรุณาอัปโหลดรูปภาพที่เห็นใบพริกชัดเจน)
+        <div style="text-align: center;">
+            <div class="badge">✨ AI Powered System</div>
+            <h1>Chili Doctor</h1>
+            <p class="desc">
+                ระบบผู้เชี่ยวชาญตรวจวินิจฉัยโรคพริกอัจฉริยะ<br>
+                <span style="color: #999; font-size: 0.9rem;">Upload a photo to start diagnosis</span>
+            </p>
         </div>
     """, unsafe_allow_html=True)
 
-    # ช่องอัปโหลดไฟล์ (อยู่ในกรอบขาวเดียวกัน)
+    # File Uploader
     file = st.file_uploader("", type=["jpg", "png", "jpeg"])
 
 # ==========================================
-# ⬜ ส่วน Result (การ์ดใบที่ 2 - แสดงเมื่อมีไฟล์)
+# ⬜ ส่วน Result (แสดงเมื่อมีไฟล์)
 # ==========================================
 if file is not None:
-    # สร้างกรอบขาวอีกอันแยกออกมา
     with st.container(border=True):
         image = Image.open(file)
         
-        # จัดรูปให้อยู่ตรงกลาง
+        # Grid Layout for Image
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
             st.image(image, use_container_width=True)
+            st.markdown('<p style="text-align: center; color: #999; font-size: 0.8rem; margin-top: 5px;">Image Preview</p>', unsafe_allow_html=True)
         
-        # ปุ่มกดวิเคราะห์
-        if st.button("🔍 วิเคราะห์โรคเดี๋ยวนี้"):
+        # Analyze Button
+        if st.button("Start Analysis ⚡"):
             if model is None:
-                st.error("❌ ไม่สามารถโหลดโมเดลได้")
+                st.error("Error: Model not found.")
             else:
-                with st.spinner('🤖 AI กำลังประมวลผล...'):
+                with st.spinner('Processing image data...'):
                     predictions = import_and_predict(image, model)
                     class_names = ['healthy', 'leaf curl', 'leaf spot', 'whitefly', 'yellow']
                     class_index = np.argmax(predictions)
                     result_class = class_names[class_index]
                     confidence = np.max(predictions) * 100
 
-                # แสดงเส้นคั่น
-                st.markdown("<hr style='margin: 30px 0; border-top: 1px solid #eee;'>", unsafe_allow_html=True)
+                # Result Design
+                st.markdown("<hr style='border-top: 1px solid #eee; margin: 30px 0;'>", unsafe_allow_html=True)
                 
-                # แสดงผลลัพธ์
+                # Main Result
                 st.markdown(f"""
-                    <div style="text-align: center; margin-bottom: 20px;">
-                        <h3 style="color: #555; margin: 0; font-size: 1.2rem;">ผลการวิเคราะห์</h3>
-                        <h1 style="color: #28a745; font-size: 3rem; margin: 10px 0; font-weight: 800;">{result_class}</h1>
-                        <p style="color: #888; font-size: 1.1rem;">ความมั่นใจ: <b>{confidence:.2f}%</b></p>
+                    <div style="text-align: center;">
+                        <h2 style="color: #333; margin: 0; font-size: 1.5rem;">Analysis Result</h2>
+                        <h1 style="color: #00c853; font-size: 3.5rem; font-weight: 800; margin: 10px 0; letter-spacing: -2px;">{result_class}</h1>
+                        <div style="display: inline-block; background: #eee; padding: 5px 15px; border-radius: 15px; font-size: 0.9rem; font-weight: 600; color: #555;">
+                            Confidence Score: {confidence:.2f}%
+                        </div>
                     </div>
                 """, unsafe_allow_html=True)
 
-                # คำแนะนำ (Card ย่อย)
-                treatment_text = ""
-                bg_color = "#fff3cd"
-                text_color = "#856404"
-                icon = "⚠️"
-
-                if result_class == 'healthy':
-                    treatment_text = "ต้นพริกแข็งแรงดี! ไม่พบร่องรอยโรค หมั่นดูแลรดน้ำและใส่ปุ๋ยตามปกติ"
-                    bg_color = "#d4edda"
-                    text_color = "#155724"
-                    icon = "🌿"
-                elif result_class == 'leaf curl':
-                    treatment_text = "โรคใบหงิกมักเกิดจากแมลงหวี่ขาว ให้กำจัดวัชพืชและใช้สารสกัดสะเดา หรือเชื้อราเมตาไรเซียมฉีดพ่น"
-                elif result_class == 'leaf spot':
-                    treatment_text = "โรคใบจุดตากบ เกิดจากเชื้อรา ให้ตัดแต่งใบที่เป็นโรคเผาทำลาย และฉีดพ่นสารป้องกันเชื้อรา"
-                elif result_class == 'whitefly':
-                     treatment_text = "พบแมลงหวี่ขาว ให้ใช้กับดักกาวเหนียวสีเหลือง หรือฉีดพ่นน้ำหมักสมุนไพร"
-                elif result_class == 'yellow':
-                     treatment_text = "อาการใบเหลือง อาจเกิดจากการขาดสารอาหาร หรือไวรัส ควรตรวจสอบดินและใส่ปุ๋ยบำรุง"
+                # Recommendation Card
+                rec_title = ""
+                rec_detail = ""
+                rec_color = "#333"
                 
+                if result_class == 'healthy':
+                    rec_title = "Healthy Plant"
+                    rec_detail = "ต้นพริกของคุณแข็งแรงดีครับ! ไม่พบร่องรอยของโรคใดๆ แนะนำให้ดูแลรดน้ำและใส่ปุ๋ยตามปกติ"
+                    rec_color = "#00c853"
+                elif result_class == 'leaf curl':
+                    rec_title = "Leaf Curl Disease"
+                    rec_detail = "โรคใบหงิก: มักเกิดจากแมลงหวี่ขาวเป็นพาหะ แนะนำให้กำจัดวัชพืชรอบแปลง และใช้สารสกัดสะเดาฉีดพ่น"
+                    rec_color = "#ff9800"
+                elif result_class == 'leaf spot':
+                    rec_title = "Leaf Spot Disease"
+                    rec_detail = "โรคใบจุดตากบ: เกิดจากเชื้อรา แนะนำให้ตัดแต่งใบที่เป็นโรคไปเผาทำลาย และฉีดพ่นสารป้องกันเชื้อรา"
+                    rec_color = "#ff5722"
+                elif result_class == 'whitefly':
+                    rec_title = "Whitefly Infestation"
+                    rec_detail = "พบแมลงหวี่ขาว: ภัยเงียบของสวนพริก แนะนำให้ใช้กับดักกาวเหนียวสีเหลือง หรือฉีดพ่นน้ำหมักสมุนไพรไล่แมลง"
+                    rec_color = "#2196f3"
+                elif result_class == 'yellow':
+                    rec_title = "Yellow Leaf Disease"
+                    rec_detail = "อาการใบเหลือง: อาจเกิดจากไวรัสหรือขาดสารอาหาร ตรวจสอบสภาพดินและใส่ปุ๋ยบำรุงด่วน"
+                    rec_color = "#ffeb3b"
+
                 st.markdown(f"""
-                    <div style="background-color: {bg_color}; color: {text_color}; padding: 25px; border-radius: 16px; text-align: left; font-size: 1.1rem; line-height: 1.6;">
-                        <strong style="display:block; margin-bottom:10px; font-size:1.2rem;">{icon} คำแนะนำ:</strong>
-                        {treatment_text}
+                    <div style="background-color: #fafafa; border-radius: 16px; padding: 25px; margin-top: 30px; border: 1px solid #eee;">
+                        <h4 style="margin-top: 0; color: {rec_color}; display: flex; align-items: center; gap: 10px;">
+                            💡 Recommendation
+                        </h4>
+                        <p style="color: #333; margin-bottom: 5px; font-weight: 600; font-size: 1.1rem;">{rec_title}</p>
+                        <p style="color: #666; font-weight: 300; margin: 0; font-size: 1rem;">{rec_detail}</p>
                     </div>
                 """, unsafe_allow_html=True)
 
 # Footer
 st.markdown("""
-    <div style="text-align: center; margin-top: 40px; color: rgba(255,255,255,0.8); font-size: 0.9rem;">
-        โครงงานวิจัยทางคอมพิวเตอร์ • มหาวิทยาลัยราชภัฏอุบลราชธานี<br>
-        พัฒนาโดย: แมวสีขาวเทา และผองเพื่อน
-    </div>
+<div style="text-align: center; margin-top: 50px; color: #bbb; font-size: 0.8rem; font-weight: 300;">
+    Computer Research Project • UBRU<br>
+    Designed by WhiteCat Team
+</div>
 """, unsafe_allow_html=True)
