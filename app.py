@@ -22,10 +22,10 @@ st.markdown("""
         font-family: 'Prompt', sans-serif;
     }
     
-    /* 1. พื้นหลังหลัก (Background): Gradient สีส้มแดง */
-    .stApp, [data-testid="stAppViewContainer"] {
+    /* --- ส่วนที่ลบออกไป: พื้นหลัง Gradient สีส้มแดง --- */
+    /* .stApp, [data-testid="stAppViewContainer"] {
         background: linear-gradient(135deg, #FF416C 0%, #FF4B2B 100%) !important;
-    }
+    } */
 
     /* 2. ปรับแต่ง "กรอบ/การ์ด" (Container) ให้เป็นสีขาวทึบ */
     [data-testid="stVerticalBlockBorderWrapper"] {
@@ -33,7 +33,7 @@ st.markdown("""
         background: #FFFFFF !important;
         border-radius: 24px !important;
         border: none !important;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2) !important;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1) !important; /* ลดความเข้มเงาลงนิดหน่อยเพื่อให้เข้ากับพื้นหลังขาว */
         padding: 40px 30px !important;
         margin-bottom: 20px;
     }
@@ -125,21 +125,24 @@ st.markdown("""
     /* 7. Footer */
     .footer-credit {
         font-size: 0.8rem;
-        color: #fff;
+        color: #666; /* เปลี่ยนสี Text footer ให้เข้มขึ้นเพราะพื้นหลังขาว */
         margin-top: 30px;
         padding-top: 15px;
         text-align: center;
         opacity: 0.8;
     }
     .badge-custom {
-        background-color: rgba(255,255,255,0.2);
-        color: #fff;
+        background-color: rgba(0,0,0,0.1); /* เปลี่ยนสี badge ให้เข้มขึ้น */
+        color: #666;
         padding: 0.35em 0.65em;
         font-size: 0.75em;
         font-weight: 700;
         border-radius: 0.25rem;
         display: inline-block;
         margin-top: 10px;
+    }
+    .footer-dev-name {
+        margin-top: 10px; font-size: 0.75rem; color: #888; /* เพิ่ม class สี่ text */
     }
 
     /* Animation Keyframes */
@@ -267,11 +270,11 @@ with st.container(border=True):
                     treatment_text = "โรคใบจุดตากบ เกิดจากเชื้อรา ให้ตัดแต่งใบที่เป็นโรคเผาทำลาย และฉีดพ่นสารป้องกันเชื้อรา"
                     icon = "🍂"
                 elif result_class == 'whitefly':
-                     treatment_text = "พบแมลงหวี่ขาว ให้ใช้กับดักกาวเหนียวสีเหลือง หรือฉีดพ่นน้ำหมักสมุนไพร"
-                     icon = "🪰"
+                      treatment_text = "พบแมลงหวี่ขาว ให้ใช้กับดักกาวเหนียวสีเหลือง หรือฉีดพ่นน้ำหมักสมุนไพร"
+                      icon = "🪰"
                 elif result_class == 'yellow':
-                     treatment_text = "อาการใบเหลือง อาจเกิดจากการขาดสารอาหาร หรือไวรัส ควรตรวจสอบดินและใส่ปุ๋ยบำรุง"
-                     icon = "🟡"
+                      treatment_text = "อาการใบเหลือง อาจเกิดจากการขาดสารอาหาร หรือไวรัส ควรตรวจสอบดินและใส่ปุ๋ยบำรุง"
+                      icon = "🟡"
                 
                 st.markdown(f"""
                     <div style="background-color: {bg_color}; color: {text_color}; border: 1px solid {border_color}; padding: 20px; border-radius: 12px; margin-top: 15px; font-size: 0.95rem;">
@@ -291,7 +294,7 @@ st.markdown("""
         โครงงานวิจัยทางคอมพิวเตอร์ <br>
         <strong>มหาวิทยาลัยราชภัฏอุบลราชธานี</strong> <br>
         <span class="badge-custom">v.1.0 (Final Release)</span> <br>
-        <div style="margin-top: 10px; font-size: 0.75rem; color: #eee;">
+        <div class="footer-dev-name">
             พัฒนาโดย: แมวสีขาวเทา และผองเพื่อน
         </div>
     </div>
