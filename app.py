@@ -11,80 +11,75 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- 🎨 ส่วนตกแต่ง CSS (โทนสี Soft & Clean) ---
+# --- 🎨 ส่วนตกแต่ง CSS (ธีมสีสดใส เหมือนหน้า Portal) ---
 st.markdown("""
 <style>
     /* นำเข้าฟอนต์ Prompt */
     @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap');
     
-    /* เปลี่ยนพื้นหลังทั้งหน้า: ใช้สีขาวอมชมพูอ่อนๆ สบายตา */
+    /* 1. พื้นหลัง: สีส้มแดงสดใส (ตามหน้า HTML Portal) */
     .stApp {
-        background: linear-gradient(135deg, #fffbfb 0%, #fff0f0 100%);
+        background: linear-gradient(135deg, #FF416C 0%, #FF4B2B 100%);
         font-family: 'Prompt', sans-serif;
-        color: #333333; /* สีตัวอักษรหลัก: เทาเข้ม */
+        color: #333333;
     }
 
-    /* ปรับแต่งกล่องหลัก (Main Container) */
+    /* 2. กล่องหลัก: สไตล์กระจก (Glassmorphism) เหมือน .glass-card */
     .main .block-container {
-        background: rgba(255, 255, 255, 0.85); /* พื้นหลังขาวโปร่งแสง */
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 24px; /* ความโค้งเท่ากับ HTML */
         padding: 2.5rem;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); /* เงาจางๆ นุ่มๆ */
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2); /* เงาเท่ากับ HTML */
         max-width: 700px;
         margin-top: 2rem;
-        border: 1px solid rgba(255, 255, 255, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.3);
     }
 
-    /* ปรับแต่งหัวข้อ */
+    /* หัวข้อ */
     h1 {
-        color: #2c3e50;
+        color: #333; /* สีเทาเข้ม */
         font-weight: 600;
         text-align: center;
         padding-bottom: 0.5rem;
     }
     
-    /* ซ่อน Header/Footer เดิมของ Streamlit */
     #MainMenu {visibility: hidden;}
     header {visibility: hidden;}
     footer {visibility: hidden;}
     
-    /* ปรับแต่งปุ่มกด (Button): สีส้มพีช/คอรัล นุ่มๆ */
+    /* 3. ปุ่มกด: สีส้มแดง */
     div.stButton > button {
-        background: linear-gradient(90deg, #ff9a9e 0%, #ff6b6b 100%);
+        background: linear-gradient(90deg, #FF416C 0%, #FF4B2B 100%);
         color: white;
         border: none;
         border-radius: 50px;
         padding: 0.6rem 2rem;
         font-size: 1.1rem;
-        font-weight: 500;
+        font-weight: 600;
         width: 100%;
         transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.2);
-        letter-spacing: 0.5px;
+        box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4);
     }
     div.stButton > button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
-        background: linear-gradient(90deg, #ff8a8e 0%, #ff5b5b 100%);
+        box-shadow: 0 6px 20px rgba(255, 65, 108, 0.6);
+        background: linear-gradient(90deg, #ff5b7a 0%, #ff6b4b 100%);
         color: white;
     }
-    div.stButton > button:active {
-        color: white;
-        transform: translateY(0);
-    }
-
-    /* ปรับแต่ง File Uploader: สีเทาอ่อน สะอาดตา */
+    
+    /* 4. File Uploader: เส้นขอบสีแดง */
     .stFileUploader {
-        border: 2px dashed #e0e0e0;
+        border: 2px dashed #FF4B2B;
         border-radius: 15px;
         padding: 15px;
-        background: #f8f9fa;
+        background: rgba(255, 255, 255, 0.5);
         transition: border-color 0.3s;
     }
     .stFileUploader:hover {
-        border-color: #ff9a9e;
+        border-color: #c0392b;
+        background-color: rgba(255, 255, 255, 0.8);
     }
     
     /* Custom Header Style */
@@ -93,33 +88,37 @@ st.markdown("""
         margin-bottom: 35px;
     }
     .app-icon {
-        width: 90px;
-        height: 90px;
-        /* พื้นหลังไอคอนไล่สีจางๆ */
-        background: linear-gradient(135deg, #fff0f0 0%, #ffe4e4 100%);
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(45deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 45px;
-        margin: 0 auto 15px;
-        box-shadow: 0 8px 20px rgba(255, 100, 100, 0.1);
-        border: 3px solid white;
+        font-size: 50px;
+        margin: 0 auto 20px;
+        box-shadow: 0 4px 15px rgba(255, 75, 43, 0.3);
+        animation: pulse 2s infinite;
     }
     .subtitle {
-        color: #e57373; /* สีแดงอ่อน */
+        color: #d32f2f;
         font-weight: 500;
-        font-size: 0.95rem;
-        letter-spacing: 1.5px;
+        font-size: 0.9rem;
+        letter-spacing: 1px;
         text-transform: uppercase;
         margin-bottom: 5px;
     }
     
-    /* ปรับแต่งข้อความสถานะ (Info, Success, Error) ให้ดู Modern */
     .stAlert {
         border-radius: 12px;
         border: none;
         box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 75, 43, 0.4); }
+        70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(255, 75, 43, 0); }
+        100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 75, 43, 0); }
     }
 </style>
 """, unsafe_allow_html=True)
@@ -174,14 +173,14 @@ st.markdown("""
     <div class="custom-header">
         <div class="app-icon">🌶️</div>
         <div class="subtitle">AI Expert System</div>
-        <h1 style="margin-top: 0; color: #2c3e50;">Chili Doctor AI</h1>
+        <h1 style="margin-top: 0; color: #333;">Chili Doctor AI</h1>
     </div>
 """, unsafe_allow_html=True)
 
 st.markdown("""
-<p style="text-align: center; color: #7f8c8d; margin-bottom: 30px; line-height: 1.6;">
+<p style="text-align: center; color: #555; margin-bottom: 30px; line-height: 1.6;">
     ระบบผู้เชี่ยวชาญปัญญาประดิษฐ์เพื่อวินิจฉัยโรคของพริกจากใบ <br>
-    <span style="font-size: 0.9rem; color: #95a5a6;">(กรุณาอัปโหลดรูปภาพที่เห็นใบพริกชัดเจน)</span>
+    <span style="font-size: 0.9rem; color: #888;">(กรุณาอัปโหลดรูปภาพที่เห็นใบพริกชัดเจน)</span>
 </p>
 """, unsafe_allow_html=True)
 
@@ -253,7 +252,7 @@ else:
 
 # Footer สวยๆ
 st.markdown("""
-<div style="text-align: center; margin-top: 60px; color: #b0b0b0; font-size: 0.8rem; border-top: 1px solid #f0f0f0; padding-top: 20px;">
+<div style="text-align: center; margin-top: 60px; color: #e0e0e0; font-size: 0.8rem; border-top: 1px solid rgba(255,255,255,0.3); padding-top: 20px;">
     โครงงานวิจัยทางคอมพิวเตอร์ • มหาวิทยาลัยราชภัฏอุบลราชธานี<br>
     <span style="font-size: 0.75rem;">พัฒนาโดย: แมวสีขาวเทา และผองเพื่อน</span>
 </div>
