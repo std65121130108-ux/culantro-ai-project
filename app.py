@@ -441,29 +441,9 @@ full_url = base_url + urllib.parse.quote(path)
 
 st.markdown(f"""
     <div style="text-align: center; margin-top: 30px; margin-bottom: 20px;">
-        <a href="{full_url}" target="_blank" onclick="setTimeout(function(){{window.close();}}, 1000);" class="custom-home-btn">
+        <a href="{full_url}" target="_blank" class="custom-home-btn">
             🏠 คลิกเพื่อกลับสู่หน้าหลัก
         </a>
-        <br>
-        <small style="color: #999; font-size: 0.7rem;">
-            *หากหน้าเว็บเดิมไม่ปิดอัตโนมัติ เป็นเพราะระบบความปลอดภัยของเบราว์เซอร์
-        </small>
-    </div>
-    
-    <script>
-        // เผื่อไว้: พยายามสั่งปิดหน้านี้เมื่อมีการกดลิงก์ (อาจถูกบล็อกโดย Browser)
-        var links = document.querySelectorAll('.custom-home-btn');
-        for (var i = 0; i < links.length; i++) {{
-            links[i].addEventListener('click', function() {{
-                setTimeout(function() {{ window.close(); }}, 500);
-            }});
-        }}
-    </script>
-""", unsafe_allow_html=True)
-
-st.markdown("""
-    <div class="footer-credit">
-        <strong>ระบบวินิจฉัยโรคผักชีฝรั่ง V.1.0</strong>
     </div>
 """, unsafe_allow_html=True)
 
