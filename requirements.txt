@@ -7,3 +7,4 @@ scipy
 gdown
 pandas
 altair<5
+mysql-connector-python
