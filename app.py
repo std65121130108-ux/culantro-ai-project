@@ -436,7 +436,7 @@ else:
 # ⚠️ เปลี่ยนลิงก์ด้านล่างให้เป็นเว็บที่คุณต้องการ ⚠️
 st.markdown("""
     <div style="text-align: center; margin-top: 30px; margin-bottom: 20px;">
-        <a href="https://www.cedubru.com" target="_self" class="custom-home-btn">
+        <a href="http://www.cedubru.com/%E0%B8%95%E0%B8%A3%E0%B8%A7%E0%B8%88%E0%B9%82%E0%B8%A3%E0%B8%84%E0%B8%9C%E0%B8%B1%E0%B8%81%E0%B8%8A%E0%B8%B5%E0%B8%9D%E0%B8%A3%E0%B8%B1%E0%B9%88%E0%B8%87/" target="_self" class="custom-home-btn">
             🏠 คลิกเพื่อกลับสู่หน้าหลัก
         </a>
     </div>
