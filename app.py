@@ -6,6 +6,7 @@ import time
 import os                               
 import mysql.connector                  
 import io                               
+import gdown  # <--- เพิ่ม gdown เพื่อโหลดไฟล์จาก Drive
 
 # --- [ส่วนสำคัญ 1] สร้างไฟล์ Config บังคับ Light Mode ---
 config_dir = ".streamlit"
@@ -235,18 +236,36 @@ def update_database(img_id, result, confidence):
         return True
     except: return False
 
-# --- 4. Load Model ---
+# --- 4. Load Model (with gdown) ---
 if hasattr(st, 'cache_resource'): cache_decorator = st.cache_resource
 else: cache_decorator = st.experimental_singleton
 
 @cache_decorator
 def load_model():
-    filename = 'efficientnetb4_culantro_model.h5'
+    filename = 'culantro_weights_full_B4.h5'
+    
+    # -------------------------------------------------------------
+    # ⚠️ [สำคัญ] แก้ไขตรงนี้: ใส่ File ID จาก Google Drive ของคุณ ⚠️
+    # -------------------------------------------------------------
+    file_id = 'ใส่_FILE_ID_ของไฟล์_h5_ตรงนี้' 
+    # ตัวอย่าง: file_id = '1234abcd5678efgh...'
+    
+    url = f'https://drive.google.com/uc?id={file_id}'
+
+    # เช็คว่ามีไฟล์ไหม ถ้าไม่มีให้โหลด
     if not os.path.exists(filename):
-        return None
+        with st.spinner("⏳ กำลังดาวน์โหลดโมเดลจาก Google Drive... (ครั้งแรกอาจนานหน่อย)"):
+            try:
+                gdown.download(url, filename, quiet=False)
+            except Exception as e:
+                st.error(f"❌ ดาวน์โหลดไม่สำเร็จ: {e}")
+                return None
+
+    # โหลดเข้า TensorFlow
     try:
         return tf.keras.models.load_model(filename)
-    except:
+    except Exception as e:
+        st.error(f"❌ โมเดลเสียหาย: {e}")
         return None
 
 def import_and_predict(image_data, model):
