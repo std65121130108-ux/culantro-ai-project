@@ -110,8 +110,8 @@ IMAGE_BASE_URL = "http://www.cedubru.com/uploads/cases/"
 def init_connection():
     return mysql.connector.connect(
         host="www.cedubru.com",     
-        user="cedubruc_corn_db",        
-        password="zj2wRET8wxzCMQPKEb2N",
+        user="cedubruc_corn_db_s",        
+        password="bcbbDrypgCQXnSYu8Qrw",
         database="cedubruc_corn_db_s"  # แก้ให้ตรงกับชื่อ DB ในไฟล์ SQL
     )
 
