@@ -86,7 +86,7 @@ local_css()
 
 # --- 3. ฟังก์ชัน Database ---
 # URL รูปภาพ (จาก PHP ที่คุณอัปโหลด)
-BASE_IMAGE_URL = "http://www.cedubru.com/cedubru_corn/uploads/" 
+BASE_IMAGE_URL = "http://www.cedubru.com/corn/uploads/" 
 
 def init_connection():
     return mysql.connector.connect(
@@ -297,6 +297,6 @@ else:
     st.warning("ไม่พบข้อมูลตามเงื่อนไข")
 
 base_url = "http://www.cedubru.com/"
-path = "cedubru_corn/"
+path = "corn/"
 full_url = base_url + path
 st.markdown(f"<div style='text-align:center; margin-top:30px;'><a href='{full_url}' target='_blank' class='custom-home-btn'>🏠 กลับหน้าหลัก</a></div>", unsafe_allow_html=True)
