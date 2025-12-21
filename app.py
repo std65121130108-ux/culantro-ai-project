@@ -363,6 +363,6 @@ else:
 
 # Link กลับหน้าเว็บ
 base_url = "http://www.cedubru.com/"
-path = "cedubru_corn/" # แก้ชื่อโฟลเดอร์ให้ตรงกับที่ติดตั้งจริง
+path = "corn/" # แก้ชื่อโฟลเดอร์ให้ตรงกับที่ติดตั้งจริง
 full_url = base_url + path
 st.markdown(f"<div style='text-align:center; margin-top:30px;'><a href='{full_url}' target='_blank' class='custom-home-btn'>🏠 กลับหน้าหลัก</a></div>", unsafe_allow_html=True)
